@@ -1,0 +1,18 @@
+version: '3.8'  
+services:  
+  dbpostgres:  
+    container_name: challenge-nodejs  
+    image: postgres  
+    volumes:
+       - challenge-nodejs-db:/var/lib/postgresql  
+    restart: always  
+    environment: 
+      POSTGRES_USER: root  
+      POSTGRES_PASSWORD: root  
+      POSTGRES_DB: DisneyWorld   
+    ports:  
+      - "8000:5432"  
+      
+volumes:                                
+  challenge-nodejs-db:
+    driver: local
