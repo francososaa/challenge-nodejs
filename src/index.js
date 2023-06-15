@@ -13,10 +13,10 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Endpoints
-app.use(require( '/auth','./src/routes/auth-router' ));
+app.use(require( '/auth', './routes/auth-router.js' ));
 
 //DB
-( async () => { await sequelize.sync({ force: true }); })();
+( async () => { await sequelize.sync({ force: false }); })();
 
 sequelize.authenticate()
     .then(() => { console.log(('Connected to database successfully'));})
