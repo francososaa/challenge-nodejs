@@ -1,8 +1,9 @@
 require('dotenv').config();
-require('./models/user');
+require('./models/index');
 const express = require('express');
 const cors = require('cors');
 const sequelize  = require('./db/database');
+const authRouter = require('./routes/auth-router');
 
 // Initializations
 const app = express();
@@ -13,10 +14,10 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Endpoints
-app.use(require( '/auth', './routes/auth-router.js' ));
+app.use( '/auth', authRouter );
 
 //DB
-( async () => { await sequelize.sync({ force: false }); })();
+( async () => { await sequelize.sync({ force: true }); })();
 
 sequelize.authenticate()
     .then(() => { console.log(('Connected to database successfully'));})

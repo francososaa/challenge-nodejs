@@ -1,10 +1,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/database');
 
-
 const Character = sequelize.define('character',
     {
-    idCharacters: {
+    idCharacter: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true

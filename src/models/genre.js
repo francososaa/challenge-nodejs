@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/database');
 
-
 const Genre = sequelize.define('genre',
     {
      idGenre: {

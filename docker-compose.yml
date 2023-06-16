@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: root  
       POSTGRES_DB: DisneyWorld   
     ports:  
-      - "8000:5432"  
+      - "8080:5432"  
       
 volumes:                                
   challenge-nodejs-db:
