@@ -17,7 +17,7 @@ app.use(express.static('public'));
 app.use( '/auth', authRouter );
 
 //DB
-( async () => { await sequelize.sync({ force: true }); })();
+( async () => { await sequelize.sync({ force: false }); })();
 
 sequelize.authenticate()
     .then(() => { console.log(('Connected to database successfully'));})
