@@ -26,7 +26,7 @@ const login = async ( req, res ) => {
     } catch (error){ 
         return res.status(500).send( { status: 500, message: 'Talk to the administrator' } );
     }
-}
+};
 
 const authRegister = async (req, res) => {
     const { name, email, password } = req.body;
