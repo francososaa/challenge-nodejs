@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs');
-const generateToken = require('../helpers/generar-jwt');
+const { generarJWT } = require('../helpers/generar-jwt');
+const mailService = require('../services/email-service');
 const User = require('../models/user');
 
 const login = async ( req, res ) => {
@@ -15,7 +16,7 @@ const login = async ( req, res ) => {
         const validPassword = bcryptjs.compareSync( password, user.password );
         if ( !validPassword ) return res.status(400).send({ status: 400, message: 'Password is incorrect' });
 
-        const token = await generateToken( user.id );
+        const token = await generarJWT( user.id );
         return res.send({ 
             message: 'Successfully logged in',
             user,
@@ -28,34 +29,38 @@ const login = async ( req, res ) => {
 }
 
 const authRegister = async (req, res) => {
-    const { name, email, password } = req.body
+    const { name, email, password } = req.body;
 
-    if (!name | !email | !password) return res.status(400).json({ error: 'name, email and password are mandatory' })
+    if (!name | !email | !password) return res.status(400).json({ error: 'Name, email and password are mandatory' });
     
     try {
         const user = await User.create({
             name,
             email,
             password
-        })
+        });
 
         const salt = bcryptjs.genSaltSync(10);
-        user.password = bcryptjs.hashSync(body.password, salt);
+        user.password = bcryptjs.hashSync(password, salt);
         await user.save();
+        
+        let mail = new mailService(user.email, user.name);
+        mail.sendMail().catch();
 
-        const token = await generateToken(user.id);
+        const token = await generarJWT(user.id);
+
         return res.status(201).send({
             message: 'Successfully Registered',
             user,
             token
-        })
+        });
 
     } catch (error) {
-        return res.status(500).send({ error: error })
+        return res.status(500).send({ error: error.messaje });
     }
 }
 
- module.exports = {
+module.exports = {
     authRegister,
     login
 };
