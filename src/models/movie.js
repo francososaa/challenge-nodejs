@@ -15,11 +15,10 @@ const Movie = sequelize.define('movie',
      },
     img: { 
         type: DataTypes.STRING,
-        allowNull: true
     },
     creation_date: { 
-        type: DataTypes.DATEONLY, 
-        defaultValue: DataTypes.NOW
+        type: DataTypes.STRING, 
+        allowNull: false
     },
     qualification: {
         type: DataTypes.INTEGER,

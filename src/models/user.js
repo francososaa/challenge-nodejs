@@ -1,5 +1,6 @@
 const { DataTypes, UUID } = require('sequelize');
 const sequelize = require('../db/database');
+const bcryptjs = require('bcryptjs');
 
 const User = sequelize.define('user',
     {
@@ -23,7 +24,13 @@ const User = sequelize.define('user',
     },
     status: { type: DataTypes.BOOLEAN, defaultValue: true },
     }, {
-        timestamps: false
+        timestamps: false,
+        hooks: {
+            beforeCreate: async function (user) {
+                const salt = bcryptjs.genSaltSync(10);
+                user.password = await bcryptjs.hashSync(user.password, salt)
+            }
+        }
     }
 );
 

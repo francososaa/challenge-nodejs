@@ -1,12 +1,15 @@
 require('dotenv').config();
-require('./models/index');
 const express = require('express');
 const cors = require('cors');
-const sequelize  = require('./db/database');
+
+const db  = require('./db/database');
+const dbConfiguration = require('./db/dbConfig');
+
 const authRouter = require('./routes/auth-router');
 const movieRouter = require('./routes/movie-router');
 const genreRouter = require('./routes/genre-router');
 const characterRouter = require('./routes/character-router');
+
 
 // Initializations
 const app = express();
@@ -23,11 +26,7 @@ app.use( '/genre', genreRouter );
 app.use( '/characters', characterRouter );
 
 //DB
-( async () => { await sequelize.sync({ force: false }); })();
-
-sequelize.authenticate()
-    .then(() => { console.log(('Connected to database successfully'));})
-    .catch( err => { console.log('Could not connect to database');});
+dbConfiguration( db, { mockdata: process.env.MOCKDATA } );
 
 // Starting the server
 app.listen(process.env.PORT);

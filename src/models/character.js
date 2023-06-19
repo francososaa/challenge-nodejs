@@ -14,7 +14,6 @@ const Character = sequelize.define('character',
      },
     img: { 
         type: DataTypes.STRING,
-        allowNull: true,
     },
     age: { 
         type: DataTypes.INTEGER,
@@ -25,7 +24,7 @@ const Character = sequelize.define('character',
         allowNull: false,
     },
     history: { 
-        type: DataTypes.STRING, 
+        type: DataTypes.TEXT, 
         allowNull: false,
      },
     status: { type: DataTypes.BOOLEAN, defaultValue: true },

@@ -46,8 +46,6 @@ const authRegister = async (req, res) => {
             password
         });
 
-        const salt = bcryptjs.genSaltSync(10);
-        user.password = bcryptjs.hashSync(password, salt);
         await user.save();
         
         let mail = new mailService(user.email, user.name);
@@ -62,7 +60,7 @@ const authRegister = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).send({ error: error.messaje });
+        return res.status(500).send({ error: error.message});
     }
 }
 
