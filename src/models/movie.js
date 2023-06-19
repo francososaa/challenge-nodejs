@@ -15,8 +15,7 @@ const Movie = sequelize.define('movie',
      },
     img: { 
         type: DataTypes.STRING,
-        allowNull: false,
-        validate: { notEmpty: true}
+        allowNull: true
     },
     creation_date: { 
         type: DataTypes.DATEONLY, 

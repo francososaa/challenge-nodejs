@@ -12,10 +12,6 @@ const Genre = sequelize.define('genre',
         type: DataTypes.STRING,
         allowNull: false,
      },
-    img: { 
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     status: { type: DataTypes.BOOLEAN, defaultValue: true },
     }, {
         timestamps: false

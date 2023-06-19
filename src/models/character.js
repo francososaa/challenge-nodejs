@@ -14,7 +14,7 @@ const Character = sequelize.define('character',
      },
     img: { 
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     age: { 
         type: DataTypes.INTEGER,
