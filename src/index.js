@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const sequelize  = require('./db/database');
 const authRouter = require('./routes/auth-router');
+const movieRouter = require('./routes/movie-router');
 
 // Initializations
 const app = express();
@@ -15,9 +16,10 @@ app.use(express.static('public'));
 
 // Endpoints
 app.use( '/auth', authRouter );
+app.use( '/movies', movieRouter );
 
 //DB
-( async () => { await sequelize.sync({ force: false }); })();
+( async () => { await sequelize.sync({ force: true }); })();
 
 sequelize.authenticate()
     .then(() => { console.log(('Connected to database successfully'));})

@@ -1,5 +1,5 @@
 const bcryptjs = require('bcryptjs');
-const { generarJWT } = require('../helpers/generar-jwt');
+const generarJWT  = require('../helpers/generar-jwt');
 const mailService = require('../services/email-service');
 const User = require('../models/user');
 
@@ -10,7 +10,13 @@ const login = async ( req, res ) => {
     if (!email | !password) return res.status(400).send({ error: 'email and password are mandatory' })
     
     try {
-        const user = await User.findOne( { email } );
+        const user = await User.findOne( { 
+            where: { 
+                email : email,
+                status: true 
+            } 
+        } );
+        
         if( !user ) return res.status(400).send({ status: 400, message: 'User does not exist' });
 
         const validPassword = bcryptjs.compareSync( password, user.password );
@@ -24,7 +30,7 @@ const login = async ( req, res ) => {
         });
 
     } catch (error){ 
-        return res.status(500).send( { status: 500, message: 'Talk to the administrator' } );
+        return res.status(500).send( { status: 500, message: error.message } );
     }
 };
 

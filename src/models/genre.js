@@ -3,7 +3,7 @@ const sequelize = require('../db/database');
 
 const Genre = sequelize.define('genre',
     {
-     idGenre: {
+     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
@@ -11,17 +11,10 @@ const Genre = sequelize.define('genre',
     name: { 
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-            notEmpty: true,
-            msj: 'Please enter your name' 
-        }
      },
     img: { 
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-            notEmpty: false
-        }
     },
     status: { type: DataTypes.BOOLEAN, defaultValue: true },
     }, {
