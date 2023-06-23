@@ -23,6 +23,10 @@ const Movie = sequelize.define('movie',
     qualification: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+            min: 1,
+            max: 5
+        }
     },
     status: { type: DataTypes.BOOLEAN, defaultValue: true },
     }, {
