@@ -32,6 +32,7 @@ const Movie = sequelize.define('movie',
     }, {
         timestamps: false,
         createdAt: false,
+        updatedAt: false
     }
 );
 

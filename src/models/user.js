@@ -25,6 +25,8 @@ const User = sequelize.define('user',
     status: { type: DataTypes.BOOLEAN, defaultValue: true },
     }, {
         timestamps: false,
+        createdAt: false,
+        updatedAt: false,
         hooks: {
             beforeCreate: async function (user) {
                 const salt = bcryptjs.genSaltSync(10);

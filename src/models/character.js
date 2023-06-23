@@ -29,7 +29,9 @@ const Character = sequelize.define('character',
      },
     status: { type: DataTypes.BOOLEAN, defaultValue: true },
     }, {
-        timestamps: false
+        timestamps: false,
+        createdAt: false,
+        updatedAt: false
     }
 );
 

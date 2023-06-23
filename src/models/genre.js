@@ -14,7 +14,9 @@ const Genre = sequelize.define('genre',
      },
     status: { type: DataTypes.BOOLEAN, defaultValue: true },
     }, {
-        timestamps: false
+        timestamps: false,
+        createdAt: false,
+        updatedAt: false
     }
 );
 

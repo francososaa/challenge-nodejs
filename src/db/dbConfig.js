@@ -31,7 +31,7 @@ async function mockData(db) {
 
     await db.sync({ force: true });
     await User.create(
-        { name: 'Micaela', email: 'micaela.velazco@yahoo.com', password: 'sosita03323'},
+        { name: 'Franco', email: 'soosaf22@gmail.com', password: 'sosita03323'},
     );
 
     const char1 = await Character.create({ name: 'Jasmine', age: 30, weight: 55, history: 'Es la protagonista'});
@@ -88,9 +88,9 @@ async function mockData(db) {
     await char13.save();
     await char14.save();
 
-    await movie1.setGenre([genre1, genre2, genre3]);
-    await movie2.setGenre([genre3, genre4, genre5]);
-    await movie3.setGenre([genre2, genre3]);
+    await movie1.setGenre(genre1, genre2, genre3);
+    await movie2.setGenre(genre3, genre4, genre5);
+    await movie3.setGenre(genre2, genre3);
     await movie1.save();
     await movie2.save();
     await movie3.save();
