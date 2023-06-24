@@ -1,8 +1,12 @@
 const service = require('../services/movie-service');
 
 const listMovie = async (req,res) => {
-    const movie = await service.findAll();
-    return res.send({ movie })
+    try {
+        const movie = await service.listAll();
+        return res.send({ movie });
+    } catch(error) {
+        return res.status(404).send({ message: error.message});
+    }
 };
 
 const listMovieById = async (req,res) => {
@@ -14,7 +18,6 @@ const listMovieById = async (req,res) => {
     } catch (error) {
         return res.status(404).send({ message: 'Movie does not exist' })
     }
-
 };
 
 const createMovie = async (req,res) => {
@@ -23,10 +26,10 @@ const createMovie = async (req,res) => {
     if ( !body ) return res.status(500).send({ msg: 'The request must have a title, image and qualification' });
 
     try {
-        const movie = service.create( body );
+        const movie = await service.create( body );
         return res.status(201).send({
             msg: 'Movie created successfully',
-            movie
+            movie: movie
         });
     } catch(error) {
         return res.status(500).send({ msg: error.message });
