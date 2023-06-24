@@ -1,6 +1,7 @@
 const Movie = require('../models/movie');
 const Genre = require('../models/genre');
 const Character = require('../models/character');
+const { Op } = require('sequelize');
 
 const create = async ( dataMovie ) => {
     const movie =  await Movie.create({
@@ -63,10 +64,37 @@ const update = async ( dataMovie, body ) => {
     return dataMovie;
 };
 
+const findMovie = async ( nameMovie, genre , order = 'ASC' ) => {
+    const movie = await Movie.findAll({
+        where: {
+            [Op.and]: [
+                {
+                    tittle : {
+                        [Op.substring]: nameMovie
+                    }
+                },
+                {  
+                    genreId: {
+                        [Op.eq]: genre
+                    } 
+                }  
+            ]
+        },
+        order: [
+            ["creation_date", order]
+        ],
+        limit: 3,
+        offset: 2
+    });
+
+    return movie;
+};
+
 module.exports = {
     create,
     listAll,
     findOneDetail,
     findOne,
+    findMovie,
     update
 };

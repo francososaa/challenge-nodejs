@@ -1,5 +1,6 @@
 const service = require('../services/movie-service');
 
+
 const listMovie = async (req,res) => {
     try {
         const movie = await service.listAll();
@@ -62,10 +63,22 @@ const deleteMovie = async (req,res) => {
     }
 };
 
+const searchMovie = async (req,res) => {
+    const { name, genre, order } = req.query;
+
+    try {
+        const movie = await service.findMovie( name, genre, order );
+        return res.send({ message: 'Successful search', movie: movie });
+    } catch (error) {
+        return res.status(404).send({ message: error.message })
+    }
+};
+
 module.exports = {
     createMovie,
     listMovie,
     listMovieById,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    searchMovie
 };

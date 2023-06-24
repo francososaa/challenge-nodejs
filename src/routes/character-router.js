@@ -1,10 +1,10 @@
 const { Router } = require('express');
 const router = Router();
-const { createCharacter } = require('../controllers/character-controller');
+const controller = require('../controllers/character-controller');
 
 
 router.get('/');
-router.post('/' , createCharacter );
+router.post('/' , controller.createCharacter );
 router.get('/:id/list');
 router.put('/:id/update');
 router.delete('/:id/delete');
