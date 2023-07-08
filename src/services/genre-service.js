@@ -1,12 +1,10 @@
 const Genre = require('../models/genre');
 
 const create =  async ( nameGenre, imageGenre ) => {
-    const genre = await Genre.create(
-        { 
+    const genre = await Genre.create({ 
             name: nameGenre, 
             image: imageGenre 
-        }
-    );
+    });
 
     await genre.save();
     return genre;

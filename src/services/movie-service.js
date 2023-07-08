@@ -9,7 +9,6 @@ const create = async ( dataMovie ) => {
         image: dataMovie.image,
         creationDate: dataMovie.creationDate,
         qualification: dataMovie.qualification,
-        genreId: Genre
     });
 
     await movie.save;
