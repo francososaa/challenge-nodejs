@@ -1,30 +1,34 @@
 const service = require('../services/movie-service');
 
 
-const listMovie = async (req,res) => {
+const findAllMovie = async (req,res) => {
+
+    const movie = await service.listAll();
+    if ( !movie ) return res.status(404).send({ message: error.message });
+
+    res.send({ message: 'Success', movie });
+};
+
+const findMovieById = async (req,res) => {
+    const id = req.params.id;
+
+    if ( !id ) return res.status(500).send({ message: 'There is no id in the request' });
+
     try {
-        const movie = await service.listAll();
-        return res.send({ movie });
+        const movie = await service.findOneDetail(id);
+
+        if( !movie ) return res.status(404).send({ message: 'Does not exist movie' });
+
+        res.send({ message: 'Success', movie: movie });
     } catch(error) {
-        return res.status(404).send({ message: error.message});
+        return res.status(500).send({ message: error.message })
     }
 };
 
-const listMovieById = async (req,res) => {
-    const { id }  = req.query;
-
-    try {
-        const movie = await service.findOneDetail( id );
-        return res.send({ message: 'Success', movie: movie });
-    } catch (error) {
-        return res.status(404).send({ message: 'Movie does not exist' })
-    }
-};
-
-const createMovie = async (req,res) => {
+const addMovie = async (req,res) => {
     const body = req.body;
 
-    if ( !body ) return res.status(500).send({ msg: 'The request must have a title, image and qualification' });
+    if ( !body ) return res.status(500).send({ message: 'The request must have a title, image and qualification' });
 
     try {
         const movie = await service.create( body );
@@ -33,41 +37,49 @@ const createMovie = async (req,res) => {
             movie: movie
         });
     } catch(error) {
-        return res.status(500).send({ msg: error.message });
+        return res.status(404).send({ msg: error.message });
     }
 }
 
 const updateMovie = async (req,res) => {
-    const { id }  = req.query;
+    const id = req.params.id;
     const body = req.body;
 
+    if( !id || !body ) return res.status(500).send({ message: 'There is no id or body in the request'});
+
     try {
-        const movie = await service.findOne( id );
-        const movieUpdate = await service.update( movie, body );
-        return res.send({  message: 'Movie updated successfully', movie: movieUpdate });
-    } catch (error) {
+        const movie = await service.findOne(id);
+        if( !movie ) return res.status(404).send({ message: 'Movie not found' });
+
+        const movieUpdate = await service.update(movie, body);
+        return res.send({ message: 'Movie updated successfully', movie: movieUpdate });
+
+    } catch(error) {
         return res.status(404).send({ message: error.message })
     }
 };
 
 const deleteMovie = async (req,res) => {
-    const { id } = req.query;
+    const id = req.params.id;
+
+    if( !id ) return res.status(500).send({ message: 'There is no id in the request'});
 
     try {
-        const movie = await service.findOne( id );
+        const movie = await service.findOne(id);
+        if( !movie ) return res.status(404).send({ message: 'Movie not found' });
+        
         movie.status = false;
         await movie.save();
         return res.send({ message: 'Movie removed successfully', movie: movie });
-    } catch (error) {
-        return res.status(404).send({ message: error.message })
+    } catch(error) {
+        return res.status(404).send({ message: error.message });
     }
 };
 
 const searchMovie = async (req,res) => {
-    const { name, genre, order } = req.query;
 
     try {
-        const movie = await service.findMovie( name, genre, order );
+        const movie = await service.findMovie( req.query );
         return res.send({ message: 'Successful search', movie: movie });
     } catch (error) {
         return res.status(404).send({ message: error.message })
@@ -75,9 +87,9 @@ const searchMovie = async (req,res) => {
 };
 
 module.exports = {
-    createMovie,
-    listMovie,
-    listMovieById,
+    addMovie,
+    findAllMovie,
+    findMovieById,
     updateMovie,
     deleteMovie,
     searchMovie

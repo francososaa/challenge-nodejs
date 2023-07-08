@@ -1,4 +1,5 @@
 const Character = require('../models/character');
+const CharacterMovies = require('../models/characterMovie');
 const Genre = require('../models/genre');
 const Movie = require('../models/movie');
 const User = require('../models/user');
@@ -9,17 +10,20 @@ async function dbConfig( db, options = {} ) {
     try {
         await db.authenticate();
 
-        Character.belongsToMany(Movie, { through: 'CharacterMovie' });
-        Movie.belongsToMany(Character, { through: 'CharacterMovie' });
+        CharacterMovies.belongsTo(Character);
+        CharacterMovies.belongsTo(Movie);
+
+        Character.belongsToMany(Movie, { through: 'CharacterMovies' });
+        Movie.belongsToMany(Character, { through: 'CharacterMovies' });
         
-        Genre.hasMany(Movie, { onDelete: 'CASCADE' });
-        Movie.belongsTo(Genre, { onDelete: 'CASCADE' });
-    
-        if( options.mockdata === 'true' ){
-            mockData(db)
+        Genre.hasMany(Movie);
+        Movie.belongsTo(Genre);
+
+        if ( options.mockdata === 'true') {
+            mockData(db) 
         } else {
-            db.sync()
-        }
+            db.sync();
+        }    
 
         console.log(('Connected to database successfully'));
     } catch(error){
@@ -31,105 +35,108 @@ async function mockData(db) {
 
     await db.sync({ force: true });
     await User.create(
-        { name: 'Franco', email: 'soosaf22@gmail.com', password: 'sosita03323'},
+        { name: 'franco', email: 'soosaf22@gmail.com', password: 'sosita03323'},
     );
-
-    const char1 = await Character.create({ name: 'Jasmine', age: 30, weight: 55, history: 'Es la protagonista'});
-    const char2 = await Character.create({ name: 'El genio', age: 50, weight: 70, history: 'Es el genio'});
-    const char3 = await Character.create({ name: 'Aladdin', age: 30, weight: 70, history: 'Es el protagonista'});
-    const char4 = await Character.create({ name: 'Sultan', age: 30, weight: 70, history: 'Es el sultan'});
-    const char5 = await Character.create({ name: 'Ariel', age: 30, weight: 50, history: 'Es la protagonista'});
-    const char6 = await Character.create({ name: 'Principe Eric', age: 30, weight: 70, history: 'Es el protagonista'});
-    const char7 = await Character.create({ name: 'El rey del mar', age: 60, weight: 75, history: 'Es el rey del mar'});
-    const char8 = await Character.create({ name: 'Ursula', age: 50, weight: 60, history: 'Ella es ursula'});
-    const char9 = await Character.create({ name: 'Sebastian', age: 20, weight: 10, history: 'Es el cangrejo'});
-    const char10 = await Character.create({ name: 'Mickey Mouse', age: 10, weight: 50, history: 'Es Micky Mouse'});
-    const char11 = await Character.create({ name: 'Minnie Mouse', age:10, weight: 45, history: 'Es Minnie Mouse'});
-    const char12 = await Character.create({ name: 'Pato Donald', age: 10, weight: 40, history: 'Es el Pato Donald'});
-    const char13 = await Character.create({ name: 'Goofy', age: 10, weight: 30, history: 'Es Goofy'});
-    const char14 = await Character.create({ name: 'Pluto', age: 10, weight: 40, history: 'Es Pluto'});
     
-    const movie1 = await Movie.create({ tittle: 'Aladdin', creation_date: '1992', qualification: 5 });
-    const movie2 = await Movie.create({ tittle: 'La Sirenita', creation_date: '1989', qualification: 4});
-    const movie3 = await Movie.create({ tittle: 'Universo de Mickey Mouse', creation_date: '1928', qualification: 5});
+    await Genre.bulkCreate(
+        [
+            { name: 'aventure', image: 'aventure.jpg', status: true },
+            { name: 'childish', image: 'childish.jpg', status: true },
+            { name: 'animation', image: 'animation.jpg', status: true },
+            { name: 'tale', image: 'tale.jpg', status: true },
+            { name: 'childrens literature', image: 'childrens literature.jpg', status: true },
+            { name: 'science fiction', image: 'science fiction.jpg', status: true },
+            { name: 'action', image: 'action.jpg', status: true },
+            { name: 'crime', image: 'crime.jpg', status: true },
+            { name: 'fancy', image: 'fancy.jpg', status: true },
+            { name: 'super hero', image: 'super hero.jpg', status: true }
+        ],
+        {
+            ignoreDuplicates: true,
+        }
+    );
+    
+    await Movie.bulkCreate(
+        [
+            { tittle: 'aladdin', image: 'aladdin.jpg', creationDate: '1992', qualification: 5 },
+            { tittle: 'la sirenita', image: 'la_sirenita.jpg', creationDate: '1989', qualification: 4 },
+            { tittle: 'universo de mickey mouse', image: 'universo_de_mickey_mouse.jpg', creationDate: '1928', qualification: 5 },
+            { tittle: 'spiderman', image: 'spiderman.jpg', creationDate: '1994', qualification: 5 },
+            { tittle: 'wanda vision', image: 'wanda_vision.jpg', creationDate: '2021', qualification: 3 },
+            { tittle: 'guardianes de la galaxia', image: 'guardianes_de_la_galaxia.jpg', creationDate: '2014', qualification: 4 },
+            { tittle: 'loki', image: 'loki.jpg', creationDate: '2021', qualification: 4 }
+        ],
+        {
+            ignoreDuplicates: true
+        }
+    ); 
 
-    const genre1 = await Genre.create({ name: 'aventure', status: true} );
-    const genre2 = await Genre.create({ name: 'childish', status: true });
-    const genre3 = await Genre.create({ name: 'animation', status: true });
-    const genre4 = await Genre.create({ name: 'tale', status: true });
-    const genre5 = await Genre.create({ name: 'childrens literature', status: true });
-
-    await char1.addMovie(movie1);
-    await char2.addMovie(movie1);
-    await char3.addMovie(movie1);
-    await char4.addMovie(movie1);
-    await char5.addMovie(movie2);
-    await char6.addMovie(movie2);
-    await char7.addMovie(movie2);
-    await char8.addMovie(movie2);
-    await char9.addMovie(movie2);
-    await char10.addMovie(movie3);
-    await char11.addMovie(movie3);
-    await char12.addMovie(movie3);
-    await char13.addMovie(movie3);
-    await char14.addMovie(movie3);
-    await char1.save();
-    await char2.save();
-    await char3.save();
-    await char4.save();
-    await char5.save();
-    await char6.save();
-    await char7.save();
-    await char8.save();
-    await char9.save();
-    await char10.save();
-    await char11.save();
-    await char12.save();
-    await char13.save();
-    await char14.save();
-
-    await movie1.setGenre(genre1, genre2, genre3);
-    await movie2.setGenre(genre3, genre4, genre5);
-    await movie3.setGenre(genre2, genre3);
-    await movie1.save();
-    await movie2.save();
-    await movie3.save();
-
-
+    await Character.bulkCreate(
+        [
+            { name: 'jasmine', image: 'jasmine.jpg', age: 30, weight: 55, history: 'es la protagonista' },
+            { name: 'el genio', image: 'el_genio.jpg', age: 50, weight: 70, history: 'es el genio' },
+            { name: 'aladdin', image: 'aladdin.jpg', age: 30, weight: 70, history: 'es el protagonista' },
+            { name: 'sultan', image: 'sultan.jpg', age: 30, weight: 70, history: 'es el sultan' },
+            { name: 'ariel', image: 'ariel.jpg', age: 30, weight: 50, history: 'es la protagonista' },
+            { name: 'principe eric', image: 'principe_eric.jpg', age: 30, weight: 70, history: 'es el protagonista' },
+            { name: 'el rey del mar', image: 'el_rey_del_mar.jpg', age: 60, weight: 75, history: 'es el rey del mar' },
+            { name: 'ursula', image: 'ursula.jpg', age: 50, weight: 60, history: 'ella es ursula' },
+            { name: 'sebastian', image: 'sebastian.jpg', age: 20, weight: 10, history: 'es el cangrejo' },
+            { name: 'mickey mouse', image: 'mickey_mouse.jpg', age: 10, weight: 50, history: 'es micky mouse' },
+            { name: 'minnie mouse', image: 'minnie_mouse.jpg', age: 10, weight: 45, history: 'es minnie mouse' },
+            { name: 'pato donald', image: 'pato_donald.jpg', age: 10, weight: 40, history: 'es el pato donald' },
+            { name: 'goofy', image: 'goofy.jpg', age: 10, weight: 30, history: 'es goofy' },
+            { name: 'pluto', image: 'pluto.jpg', age: 10, weight: 40, history: 'es Pluto' },
+            { name: 'mary jane', image: 'mary_jane.jpg', age: 25, weight: 55, history: 'es mary jane' },
+            { name: 'peter parker', image: 'peter_parker.jpg', age: 30, weight: 70, history: 'es Piter' },
+            { name: 'agnes', image: 'agnes.jpg', age: 30, weight: 50, history: 'es agnes' },
+            { name: 'wanda maximoff', image: 'wanda_maximoff.jpg', age: 42, weight: 60, history: 'es wanda' },
+            { name: 'vision', image: 'vision.jpg', age: 37, weight: 70, history: 'es vision ' },
+            { name: 'gamora', image: 'gamora.jpg', age: 27, weight: 56, history: 'es gamora' },
+            { name: 'groot', image: 'groot.jpg', age: 20, weight: 20, history: 'es groot ' },
+            { name: 'nebula', image: 'nebula.jpg', age: 37, weight: 50, history: 'es nebula' },
+            { name: 'star-lod', image: 'star_lod.jpg', age: 40, weight: 76, history: 'es star-lod' },
+            { name: 'loki', image: 'loki.jpg', age: 27, weight: 72, history: 'es loki ' },
+            { name: 'miss minutes', image: 'miss_minutes.jpg', age: 37, weight: 50, history: 'es miss minutes' },
+            { name: 'he who ramains', image: 'he_who_ramains.jpg', age: 45, weight: 77, history: 'es he who remains' },
+        ],
+        {
+            ignoreDuplicates: true
+        }
+    );
+    
+    await CharacterMovies.bulkCreate(
+        [
+            { characterId: 1, movieId: 1 },
+            { characterId: 2, movieId: 1 },
+            { characterId: 3, movieId: 1 },
+            { characterId: 4, movieId: 1 },
+            { characterId: 5, movieId: 2 },
+            { characterId: 6, movieId: 2 },
+            { characterId: 7, movieId: 2 },
+            { characterId: 8, movieId: 2 },
+            { characterId: 9, movieId: 2 },
+            { characterId: 10, movieId: 3 },
+            { characterId: 11, movieId: 3 },
+            { characterId: 12, movieId: 3 },
+            { characterId: 13, movieId: 3 },
+            { characterId: 14, movieId: 3 },
+            { characterId: 15, movieId: 4 },
+            { characterId: 16, movieId: 4 },
+            { characterId: 17, movieId: 5 },
+            { characterId: 18, movieId: 5 },
+            { characterId: 19, movieId: 5 },
+            { characterId: 20, movieId: 6 },
+            { characterId: 21, movieId: 6 },
+            { characterId: 22, movieId: 6 },
+            { characterId: 23, movieId: 7 },
+            { characterId: 24, movieId: 7 },
+            { characterId: 25, movieId: 7 }
+        ]
+    );
+  
 };
 
 module.exports = dbConfig;
 
 
-/*
-    await Genre.bulkCreate([
-        { name: 'aventure', status: true },
-        { name: 'childish', status: true },
-        { name: 'animation', status: true },
-        { name: 'tale', status: true },
-        { name: 'childrens literature', status: true }
-    ]);
-
-
-    await Character.bulkCreate([
-        { name: 'Jasmine', age: 30, weight: 55, history: 'Es la protagonista'},
-        { name: 'El genio', age: 50, weight: 70, history: 'Es el genio'},
-        { name: 'Aladdin', age: 30, weight: 70, history: 'Es el protagonista'},
-        { name: 'Sultan', age: 30, weight: 70, history: 'Es el sultan'},
-        { name: 'Ariel', age: 30, weight: 50, history: 'Es la protagonista'},
-        { name: 'Principe Eric', age: 30, weight: 70, history: 'Es el protagonista'},
-        { name: 'El rey del mar', age: 60, weight: 75, history: 'Es el rey del mar'},
-        { name: 'Ursula', age: 50, weight: 60, history: 'Ella es ursula'},
-        { name: 'Sebastian', age: 20, weight: 10, history: 'Es el cangrejo'},
-        { name: 'Mickey Mouse', age: 10, weight: 50, history: 'Es Micky Mouse'},
-        { name: 'Minnie Mouse', age:10, weight: 45, history: 'Es Minnie Mouse'},
-        { name: 'Pato Donald', age: 10, weight: 40, history: 'Es el Pato Donald'},
-        { name: 'Goofy', age: 10, weight: 30, history: 'Es Goofy'},
-        { name: 'Pluto', age: 10, weight: 40, history: 'Es Pluto'},
-    ]);
-
-    await Movie.bulkCreate([
-        { tittle: 'Aladdin', creation_date: '1992', qualification: 5 },
-        { tittle: 'La Sirenita', creation_date: '1989', qualification: 4},
-        { tittle: 'Universo de Mickey Mouse', creation_date: '1928', qualification: 5},
-    ]); */

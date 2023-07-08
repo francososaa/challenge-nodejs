@@ -3,10 +3,11 @@ const router = Router();
 const controller = require('../controllers/character-controller');
 
 
-router.get('/');
-router.post('/' , controller.createCharacter );
-router.get('/:id/list');
-router.put('/:id/update');
-router.delete('/:id/delete');
+router.get('/', controller.findAllCharacter );
+router.post('/' , controller.addCharacter );
+router.get('/:id/detail', controller.findCharacterById );
+router.put('/:id/update', controller.updateCharacter );
+router.delete('/:id/delete', controller.deleteCharacter );
+router.get('/search', controller.searchCharacter );
 
 module.exports = router;

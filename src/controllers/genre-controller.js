@@ -2,12 +2,12 @@ const service = require('../services/genre-service');
 
 
 const createGenre = async (req,res) => {
-    const { name } = req.body;
+    const { name, image } = req.body;
 
     try {
-        const genre = await service.create( name );
+        const genre = await service.create( name, image );
         return res.status(201).send({
-            msg: 'Genre created successfully',
+            message: 'Genre created successfully',
             genre: genre
         });
     } catch(error) {
@@ -17,16 +17,14 @@ const createGenre = async (req,res) => {
 
 const listGenre = async (req,res) => {
 
-    try {
-        const genre = await service.findAll();
-        return res.send({ message: 'Success', genre: genre });
-    } catch (error) {
-        return res.status(404).send({ message: error.message })
-    }
+    const genre = await service.findAll();
+    if ( !genre ) return res.status(404).send({ message: error.message });
+    
+    res.send({ message: 'Success', genre: genre });
 };
 
 const listGenreById = async (req,res) => {
-    const { id }  = req.query;
+    const id = req.params.id;
 
     try {
         const genre = await service.findOne( id );
@@ -37,11 +35,13 @@ const listGenreById = async (req,res) => {
 };
 
 const updateGenre = async (req,res) => {
-    const { id }  = req.query;
+    const id = req.params.id;
     const body = req.body;
 
     try {
         const genre = await service.findOne( id );
+        if( !genre ) return res.status(500).send({ message: 'Genre does not exist' });
+
         const genreUpdate = await service.update( genre, body );
         return res.send({  message: 'Genre updated successfully', genre: genreUpdate });
     } catch (error) {
@@ -50,7 +50,7 @@ const updateGenre = async (req,res) => {
 };
 
 const deleteGenre = async (req,res) => {
-    const { id } = req.query;
+    const id = req.params.id;
 
     try {
         const genre = await service.findOne( id );

@@ -6,9 +6,10 @@ const { Op } = require('sequelize');
 const create = async ( dataMovie ) => {
     const movie =  await Movie.create({
         tittle: dataMovie.tittle,
-        img: dataMovie.img,
-        creation_date: dataMovie.creation_date,
+        image: dataMovie.image,
+        creationDate: dataMovie.creationDate,
         qualification: dataMovie.qualification,
+        genreId: Genre
     });
 
     await movie.save;
@@ -16,27 +17,33 @@ const create = async ( dataMovie ) => {
 };
 
 const listAll = async () => {
-    const movie = await Movie.findAll({
+    return await Movie.findAll({
         where: { status: true },
-        attributes: [ "tittle","img","creation_date"]
+        attributes: [ "tittle","image","creationDate"]
     });
-    return movie;
 };
 
 const findOneDetail = async ( idMovie ) => {
     const movie = await Movie.findByPk( idMovie, {
-        attributes: { exclude: ["genreId","img","status"] },
+        attributes: { exclude: ["status"] },
         include: [
             {
                 model: Genre,
-                attributes: ["name"]
+                attributes: ["name"],
+                through: {
+                    attributes: []
+                }
             },
             {
-                model: Character
+                model: Character,
+                through: {
+                    attributes: []
+                }
             }
         ]
-    } );
-    return movie;
+    });
+    if( movie.status === true) return movie;
+    return null;
 };
 
 const findOne = async ( idMovie ) => {
@@ -45,18 +52,23 @@ const findOne = async ( idMovie ) => {
         include: [
             {
                 model: Genre,
-                attributes: ["name"]
+                attributes: ["name"],
+                through: {
+                    attributes: []
+                }
             }
         ]
     });
-    return movie;
+
+    if ( movie.status === true ) return movie;
+    return null;
 };
 
 const update = async ( dataMovie, body ) => {
     
     dataMovie.tittle = body.tittle;
-    dataMovie.img = body.img;
-    dataMovie.creation_date = body.creation_date,
+    dataMovie.image = body.image;
+    dataMovie.creationDate = body.creationDate,
     dataMovie.qualification = body.qualification,
     dataMovie.status = body.status;
 
@@ -64,22 +76,15 @@ const update = async ( dataMovie, body ) => {
     return dataMovie;
 };
 
-const findMovie = async ( nameMovie, genre , order = 'ASC' ) => {
-    const movie = await Movie.findAll({
-        where: {
-            [Op.and]: [
-                {
-                    tittle : {
-                        [Op.substring]: nameMovie
-                    }
-                },
-                {  
-                    genreId: {
-                        [Op.eq]: genre
-                    } 
-                }  
-            ]
-        },
+const findMovie = async ( query ) => {
+    const { name, genre, order = 'ASC' } = query;
+    let queryToFind = {};
+    
+    if( name ) queryToFind.name = name;
+    if ( genre ) queryToFind.genre = genre;
+    
+    return await Movie.findAll({
+        where: queryToFind,
         order: [
             ["creation_date", order]
         ],
@@ -87,7 +92,6 @@ const findMovie = async ( nameMovie, genre , order = 'ASC' ) => {
         offset: 2
     });
 
-    return movie;
 };
 
 module.exports = {
@@ -98,3 +102,30 @@ module.exports = {
     findMovie,
     update
 };
+
+// const findMovie = async ( nameMovie, genre , order = 'ASC' ) => {
+//     const movie = await Movie.findAll({
+//         where: {
+//             [Op.and]: [
+//                 {
+//                     tittle : {
+//                         [Op.substring]: nameMovie
+//                     }
+//                 },
+//                 {  
+//                     genreId: {
+//                         [Op.eq]: genre
+//                     } 
+//                 }  
+//             ]
+//         },
+//         order: [
+//             ["creation_date", order]
+//         ],
+//         limit: 3,
+//         offset: 2
+//     });
+
+//     return movie;
+// };
+
