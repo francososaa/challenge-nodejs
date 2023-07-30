@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-export const validarJWT = async ( req, res, next ) => { 
+const validarJWT = async ( req, res, next ) => { 
     const token = req.header('authentication');
    
     if( !token ) return res.status(400).send({ message: 'You are not an authenticated user to make this request' }); 
@@ -19,3 +19,6 @@ export const validarJWT = async ( req, res, next ) => {
     next();
 };
 
+module.exports = {
+    validarJWT
+};
