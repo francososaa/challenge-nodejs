@@ -1,13 +1,13 @@
 const { Router } = require('express');
 const router = Router();
 const controller = require('../controllers/character-controller');
+const {  validarJWT } = require('../middlewares/validar-jwt');
 
-
-router.get('/', controller.findAllCharacter );
-router.post('/' , controller.addCharacter );
-router.get('/:id/detail', controller.findCharacterById );
-router.put('/:id/update', controller.updateCharacter );
-router.delete('/:id/delete', controller.deleteCharacter );
-router.get('/search', controller.searchCharacter );
+router.get('/', validarJWT, controller.findAllCharacter );
+router.post('/' , validarJWT, controller.addCharacter );
+router.get('/detail/:id', validarJWT, controller.findCharacterById );
+router.put('/update/:id', validarJWT, controller.updateCharacter );
+router.delete('/delete/:id', validarJWT, controller.deleteCharacter );
+router.get('/search', validarJWT, controller.searchCharacter );
 
 module.exports = router;

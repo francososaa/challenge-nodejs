@@ -1,13 +1,13 @@
 const { Router } = require('express');
 const router = Router();
 const controllerMovie = require('../controllers/movie-controller');
+const {  validarJWT } = require('../middlewares/validar-jwt');
 
-
-router.get('/', controllerMovie.findAllMovie );
-router.post('/' , controllerMovie.addMovie );
-router.get('/:id/detail', controllerMovie.findMovieById );
-router.put('/:id/update', controllerMovie.updateMovie );
-router.delete('/:id/delete', controllerMovie.deleteMovie );
-router.get('/search', controllerMovie.searchMovie );
+router.get('/', validarJWT, controllerMovie.findAllMovie );
+router.post('/' , validarJWT, controllerMovie.addMovie );
+router.get('/detail/:id', validarJWT, controllerMovie.findMovieById );
+router.put('/update/:id', validarJWT, controllerMovie.updateMovie );
+router.delete('/delete/:id', validarJWT, controllerMovie.deleteMovie );
+router.get('/search', validarJWT, controllerMovie.searchMovie );
 
 module.exports = router;

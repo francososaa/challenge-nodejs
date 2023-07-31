@@ -48,16 +48,7 @@ const findOneDetail = async ( idCharacter ) => {
 };
 
 const findOne = async ( idCharacter ) => {
-    const character = await Character.findByPk( idCharacter, {
-        include: [
-            {
-                model: Movie
-            }
-        ]
-    });
-    
-    if ( character.status === true ) return character;
-    return null;
+    return await Character.findByPk( idCharacter );
 };
 
 const update = async ( dataCharacter, body ) => {

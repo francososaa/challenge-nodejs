@@ -5,7 +5,7 @@ const findAllCharacter = async (req,res) => {
     const character = await service.listAll();
     if ( !character ) return res.status(404).send({ message: error.message });
 
-    res.send({ message: 'Successfully found character', character });
+    return res.send({ message: 'Successfully found character', character });
 };
 
 const findCharacterById = async (req,res) => {
@@ -55,10 +55,9 @@ const updateCharacter = async (req,res) => {
 };
 
 const deleteCharacter = async (req,res) => {
-    const { id } = req.query;
-
+    const id = req.query.id;
     try {
-        const character = await service.findOne( id );
+        const character = await service.findOne( id);
         character.status = false;
         await character.save();
         return res.send({ message: 'Character removed successfully', character: character });
