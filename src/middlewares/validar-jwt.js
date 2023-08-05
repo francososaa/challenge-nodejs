@@ -12,7 +12,7 @@ const validarJWT = async ( req, res, next ) => {
         if ( !user ) return res.status(401).send({ message: 'Token invalid - no user exists' }) 
         
         req.user = user;
-        next();
+        // next();
     } catch (error) {
         return res.status(400).send({ message: 'Invalid token' })
     }

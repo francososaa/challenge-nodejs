@@ -4,7 +4,7 @@ const Character = require('../models/character');
 const { Op } = require('sequelize');
 
 const create = async ( dataMovie ) => {
-    const movie =  await Movie.create({
+    const movie = await Movie.create({
         tittle: dataMovie.tittle,
         image: dataMovie.image,
         creationDate: dataMovie.creationDate,
@@ -18,53 +18,54 @@ const create = async ( dataMovie ) => {
 const listAll = async () => {
     return await Movie.findAll({
         where: { status: true },
-        attributes: [ "tittle","image","creationDate"]
+        attributes: ["tittle", "image", "creationDate"],
+        limit: 5,
+        offset: 5
     });
 };
 
 const findOneDetail = async ( idMovie ) => {
-    const movie = await Movie.findByPk( idMovie, {
+    return await Movie.findOne({
+        where: {
+            [Op.and]: [
+                { id: idMovie },
+                { status: true }
+            ]
+        },
         attributes: { exclude: ["status"] },
         include: [
-            {
-                model: Genre,
-                attributes: ["name"],
-                through: {
-                    attributes: []
-                }
-            },
+            // {
+            //     model: Movie,
+            //     attributes: ["name"],
+            //     through: {
+            //         attributes: []
+            //     }
+            // },
             {
                 model: Character,
+                attributes: { exclude: ["status"] },
                 through: {
                     attributes: []
                 }
             }
         ]
     });
-    if( movie.status === true) return movie;
-    return null;
+
 };
 
 const findOne = async ( idMovie ) => {
-    const movie = await Movie.findByPk( idMovie, {
-        attributes: { exclude: ["genreId"] },
-        include: [
-            {
-                model: Genre,
-                attributes: ["name"],
-                through: {
-                    attributes: []
-                }
-            }
-        ]
+    return await Movie.findOne({
+        where: {
+            [Op.and]: [
+                { id: idMovie },
+                { status: true }
+            ]
+        }
     });
-
-    if ( movie.status === true ) return movie;
-    return null;
 };
 
 const update = async ( dataMovie, body ) => {
-    
+
     dataMovie.tittle = body.tittle;
     dataMovie.image = body.image;
     dataMovie.creationDate = body.creationDate,
@@ -76,22 +77,20 @@ const update = async ( dataMovie, body ) => {
 };
 
 const findMovie = async ( query ) => {
-    const { name, genre, order = 'ASC' } = query;
-    let queryToFind = {};
-    
-    if( name ) queryToFind.name = name;
-    if ( genre ) queryToFind.genre = genre;
-    
+    let options = {};
+    if ( query.name ) options.tittle = { [Op.substring]: query.name };
+    if ( query.qualification ) options.qualification = {[Op.eq]: query.qualification};
+
     return await Movie.findAll({
-        where: queryToFind,
+        where: options,
         order: [
-            ["creation_date", order]
+            ["creationDate", query.order || "ASC"]
         ],
-        limit: 3,
+        limit: 10,
         offset: 2
     });
-
 };
+
 
 module.exports = {
     create,
@@ -101,30 +100,3 @@ module.exports = {
     findMovie,
     update
 };
-
-// const findMovie = async ( nameMovie, genre , order = 'ASC' ) => {
-//     const movie = await Movie.findAll({
-//         where: {
-//             [Op.and]: [
-//                 {
-//                     tittle : {
-//                         [Op.substring]: nameMovie
-//                     }
-//                 },
-//                 {  
-//                     genreId: {
-//                         [Op.eq]: genre
-//                     } 
-//                 }  
-//             ]
-//         },
-//         order: [
-//             ["creation_date", order]
-//         ],
-//         limit: 3,
-//         offset: 2
-//     });
-
-//     return movie;
-// };
-

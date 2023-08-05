@@ -1,9 +1,10 @@
 const Genre = require('../models/genre');
+const { Op } = require('sequelize');
 
-const create =  async ( nameGenre, imageGenre ) => {
+const create =  async ( body) => {
     const genre = await Genre.create({ 
-            name: nameGenre, 
-            image: imageGenre 
+            name: body.name, 
+            image: body.image
     });
 
     await genre.save();
@@ -15,7 +16,14 @@ const findAll = async () => {
 };
 
 const findOne = async ( idGenre ) => {
-    return await Genre.findByPk( idGenre ); 
+    return await Genre.findOne({
+        where: {
+            [Op.and]: [
+                { id: idGenre },
+                { status: true }
+            ]
+        }
+    });
 };
 
 const update = async ( dataGenre, body ) => {

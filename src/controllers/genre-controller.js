@@ -1,11 +1,34 @@
 const service = require('../services/genre-service');
 
 
-const createGenre = async (req,res) => {
-    const { name, image } = req.body;
+const findAllGenre = async (req,res) => {
+
+    const genre = await service.findAll();
+    if ( !genre ) return res.status(404).send({ message: error.message });
+    
+    res.send({ message: 'Success found genre', genre });
+};
+
+const listGenreById = async (req,res) => {
+    const id = req.params.id;
+    if ( !id ) return res.status(500).send({ message: 'There is no id in the request' });
 
     try {
-        const genre = await service.create( name, image );
+        const genre = await service.findOne( id );
+        if ( !genre ) return res.status(404).send({ message: 'Does not exist genre' });
+
+        res.send({ message: 'Success', genre: genre });
+    } catch (error) {
+        return res.status(404).send({ message: error.message })
+    }
+};
+
+const addGenre = async (req,res) => {
+    const body = req.body;
+    if ( !body ) return res.status(500).send({ message: 'No data in the body' })
+
+    try {
+        const genre = await service.create( body );
         return res.status(201).send({
             message: 'Genre created successfully',
             genre: genre
@@ -15,28 +38,11 @@ const createGenre = async (req,res) => {
     }
 };
 
-const listGenre = async (req,res) => {
-
-    const genre = await service.findAll();
-    if ( !genre ) return res.status(404).send({ message: error.message });
-    
-    res.send({ message: 'Success', genre: genre });
-};
-
-const listGenreById = async (req,res) => {
-    const id = req.params.id;
-
-    try {
-        const genre = await service.findOne( id );
-        return res.send({ message: 'Success', genre: genre });
-    } catch (error) {
-        return res.status(404).send({ message: 'Genre does not exist' })
-    }
-};
-
 const updateGenre = async (req,res) => {
     const id = req.params.id;
     const body = req.body;
+
+    if ( !id || !body ) return res.status(500).send({ message: 'There is no id or body in the request' });
 
     try {
         const genre = await service.findOne( id );
@@ -51,9 +57,12 @@ const updateGenre = async (req,res) => {
 
 const deleteGenre = async (req,res) => {
     const id = req.params.id;
+    if ( !id ) return res.status(500).send({ message: 'There is no id in the request' });
 
     try {
         const genre = await service.findOne( id );
+        if ( !genre ) return res.status(404).send({ message: 'Genre not found' });
+
         genre.status = false;
         await genre.save();
         return res.send({ message: 'Genre removed successfully', genre: genre });
@@ -63,8 +72,8 @@ const deleteGenre = async (req,res) => {
 };
 
 module.exports = {
-    createGenre,
-    listGenre,
+    addGenre,
+    findAllGenre,
     listGenreById,
     updateGenre,
     deleteGenre

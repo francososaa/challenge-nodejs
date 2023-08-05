@@ -22,33 +22,41 @@ const listAll = async () => {
     return await Character.findAll({
         where: { status: true },
         attributes: [ "name","image"],
-        limit: 5,
+        limit: 10,
         offset: 5
     });
 };
 
 const findOneDetail = async ( idCharacter ) => {
-    const character = await Character.findByPk( idCharacter, {
+    return await Character.findOne({
+        where: {
+            [Op.and]: [
+                { id: idCharacter },
+                { status: true }
+            ]
+        },
+        attributes: { exclude: ["status"] },
         include: [
             {
                 model: Movie,
                 attributes: ["tittle","creationDate"],
-                include: [
-                    {
-                        model: Genre,
-                        attributes: ["name"]
-                    },
-                ]
+                through: {
+                    attributes: []
+                }
             },
         ]
     } );
-
-    if ( character.status === true ) return character;
-    return null;
 };
 
 const findOne = async ( idCharacter ) => {
-    return await Character.findByPk( idCharacter );
+    return await Character.findOne({
+        where: {
+            [Op.and]: [
+                { id: idCharacter },
+                { status: true }
+            ]
+        }
+    });
 };
 
 const update = async ( dataCharacter, body ) => {
@@ -65,20 +73,19 @@ const update = async ( dataCharacter, body ) => {
 };
 
 const findCharacter = async ( query ) => {
-    const { name, age, weight, idMovies } = query;
-    let queryToFind = {};
+    let options = {};
 
-    if ( name ) queryToFind.name = name;
-    if ( age ) queryToFind.age = age;
-    if ( weight ) queryToFind.weight = weight;
-    if ( idMovies ) queryToFind.idMovies = idMovies;
+    if ( query.name ) options.name = { [Op.substring]: query.name };
+    if ( query.age ) options.age = query.age;
+    if ( query.weight ) options.weight = query.weight;
+    if ( query.movies ) options.idMovies = query.movies;
 
     return await Character.findAll({
-        where: queryToFind,
+        where: options,
         order: [
-            ["ASC"]
+            ["age","ASC"]
         ],
-        limit: 5,
+        limit: 10,
         offset: 2
     });
 
@@ -92,38 +99,3 @@ module.exports = {
     update,
     findCharacter
 }
-
-// const findCharacter = async ( nameCharacter, age, weight, movies ) => {
-//     const character = await Character.findAll({
-//         where: {
-//             [Op.and]: [
-//                 {
-//                     name : {
-//                         [Op.substring]: nameCharacter
-//                     }
-//                 },
-//                 {  
-//                     [Op.or]: [
-//                         {
-//                             age: {
-//                                 [Op.eq]: age
-//                             } 
-//                         },
-//                         {
-//                             weigth: {
-//                                 [Op.eq]: weight
-//                             } 
-//                         }
-//                     ]
-//                 }  
-//             ]
-//         },
-//         order: [
-//             ["age", "ASC"]
-//         ],
-//         limit: 5,
-//         offset: 2
-//     });
-
-//     return character;
-// };
