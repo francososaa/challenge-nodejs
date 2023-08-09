@@ -8,7 +8,7 @@ const create = async ( dataMovie ) => {
         tittle: dataMovie.tittle,
         image: dataMovie.image,
         creationDate: dataMovie.creationDate,
-        qualification: dataMovie.qualification,
+        qualification: dataMovie.qualification
     });
 
     await movie.save;
@@ -110,9 +110,9 @@ const findMovie = async ( query ) => {
 
 module.exports = {
     create,
-    listAll,
-    findOneDetail,
-    findOne,
     findMovie,
+    findOne,
+    findOneDetail,
+    listAll,
     update
 };

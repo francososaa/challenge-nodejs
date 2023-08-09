@@ -118,9 +118,9 @@ const findCharacter = async ( query ) => {
 
 module.exports = {
     create,
-    listAll,
-    findOneDetail,
+    findCharacter,
     findOne,
-    update,
-    findCharacter
+    findOneDetail,
+    listAll,
+    update
 }

@@ -7,7 +7,7 @@ const login = async ( req, res ) => {
 
     const { email, password } = req.body;
 
-    if (!email | !password) return res.status(400).send({ error: 'email and password are mandatory' })
+    if ( !email | !password ) return res.status(400).send({ error: 'Email and password are mandatory' })
     
     try {
         const user = await User.findOne( { 
@@ -17,10 +17,10 @@ const login = async ( req, res ) => {
             } 
         } );
         
-        if( !user ) return res.status(400).send({ status: 400, message: 'User does not exist' });
+        if( !user ) return res.status(400).send({ message: 'User does not exist' });
 
         const validPassword = bcryptjs.compareSync( password, user.password );
-        if ( !validPassword ) return res.status(400).send({ status: 400, message: 'Password is incorrect' });
+        if ( !validPassword ) return res.status(400).send({ message: 'Password is incorrect' });
 
         const token = await generarJWT( user.id );
         return res.send({ 
@@ -30,14 +30,14 @@ const login = async ( req, res ) => {
         });
 
     } catch (error){ 
-        return res.status(500).send( { status: 500, message: error.message } );
+        return res.status(500).send({ message: error.message });
     }
 };
 
 const authRegister = async (req, res) => {
     const { name, email, password } = req.body;
 
-    if (!name | !email | !password) return res.status(400).json({ error: 'Name, email and password are mandatory' });
+    if ( !name | !email | !password ) return res.status(400).json({ error: 'Name, email and password are mandatory' });
     
     try {
         const user = await User.create({

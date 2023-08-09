@@ -4,7 +4,7 @@ const User = require('../models/user');
 const validarJWT = async ( req, res, next ) => { 
     const token = req.header('authentication');
    
-    if( !token ) return res.status(400).send({ message: 'You are not an authenticated user to make this request' }); 
+    if( !token ) return res.status(401).send({ message: 'You are not an authenticated user to make this request' }); 
  
     try {
         const { uid } = jwt.verify( token, process.env.SECRETORPRIVATEKEY );
