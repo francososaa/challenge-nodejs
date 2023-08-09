@@ -21,9 +21,7 @@ const create = async ( dataCharacter ) => {
 const listAll = async () => {
     return await Character.findAll({
         where: { status: true },
-        attributes: [ "name","image"],
-        limit: 10,
-        offset: 5
+        attributes: [ "name","image"]
     });
 };
 
@@ -40,6 +38,15 @@ const findOneDetail = async ( idCharacter ) => {
             {
                 model: Movie,
                 attributes: ["tittle","creationDate"],
+                include: [
+                    {
+                        model: Genre,
+                        attributes: ["name"],
+                        through: {
+                            attributes: []
+                        }
+                    },
+                ],
                 through: {
                     attributes: []
                 }
@@ -78,24 +85,42 @@ const findCharacter = async ( query ) => {
     if ( query.name ) options.name = { [Op.substring]: query.name };
     if ( query.age ) options.age = query.age;
     if ( query.weight ) options.weight = query.weight;
-    if ( query.movies ) options.idMovies = query.movies;
+    options.status = true;
 
     return await Character.findAll({
         where: options,
+        attributes: { exclude: ["status"] },
+        include: [
+            {
+                model: Movie,
+                // where: { "tittle": { [Op.substring]: query.movies} },
+                attributes: { exclude: ["id","status"] },
+                through: {
+                    attributes: []
+                },
+                include: [ 
+                    {
+                        model: Genre,
+                        attributes: ["name"],
+                        through: {
+                            attributes: []
+                        }
+                    },
+                ],
+            },
+        ],
         order: [
             ["age","ASC"]
-        ],
-        limit: 10,
-        offset: 2
+        ]
     });
 
 };
 
 module.exports = {
     create,
-    listAll,
-    findOneDetail,
+    findCharacter,
     findOne,
-    update,
-    findCharacter
+    findOneDetail,
+    listAll,
+    update
 }

@@ -8,7 +8,7 @@ const create = async ( dataMovie ) => {
         tittle: dataMovie.tittle,
         image: dataMovie.image,
         creationDate: dataMovie.creationDate,
-        qualification: dataMovie.qualification,
+        qualification: dataMovie.qualification
     });
 
     await movie.save;
@@ -19,8 +19,15 @@ const listAll = async () => {
     return await Movie.findAll({
         where: { status: true },
         attributes: ["tittle", "image", "creationDate"],
-        limit: 5,
-        offset: 5
+        include: [
+                    {
+                        model: Genre,
+                        attributes: ["name"],
+                        through: {
+                            attributes: []
+                        }
+                    },
+                ],
     });
 };
 
@@ -34,13 +41,13 @@ const findOneDetail = async ( idMovie ) => {
         },
         attributes: { exclude: ["status"] },
         include: [
-            // {
-            //     model: Movie,
-            //     attributes: ["name"],
-            //     through: {
-            //         attributes: []
-            //     }
-            // },
+            {
+                model: Genre,
+                attributes: ["name"],
+                through: {
+                    attributes: []
+                }
+            },
             {
                 model: Character,
                 attributes: { exclude: ["status"] },
@@ -79,24 +86,33 @@ const update = async ( dataMovie, body ) => {
 const findMovie = async ( query ) => {
     let options = {};
     if ( query.name ) options.tittle = { [Op.substring]: query.name };
-    if ( query.qualification ) options.qualification = {[Op.eq]: query.qualification};
+    options.status = true;
 
     return await Movie.findAll({
         where: options,
+        attributes: { exclude: ["status"] },
+        include: [
+                    {
+                        model: Genre,
+                        where: { "name": { [Op.substring]: query.genre} },
+                        attributes: ["name"],
+                        through: {
+                            attributes: []
+                        }
+                    },
+                ],
         order: [
             ["creationDate", query.order || "ASC"]
-        ],
-        limit: 10,
-        offset: 2
+        ]
     });
 };
 
 
 module.exports = {
     create,
-    listAll,
-    findOneDetail,
-    findOne,
     findMovie,
+    findOne,
+    findOneDetail,
+    listAll,
     update
 };

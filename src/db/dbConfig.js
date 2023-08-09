@@ -1,5 +1,6 @@
 const Character = require('../models/character');
 const CharacterMovies = require('../models/characterMovie');
+const GenreMovies = require('../models/genreMovie');
 const Genre = require('../models/genre');
 const Movie = require('../models/movie');
 const User = require('../models/user');
@@ -16,8 +17,11 @@ async function dbConfig( db, options = {} ) {
         Character.belongsToMany(Movie, { through: 'CharacterMovies' });
         Movie.belongsToMany(Character, { through: 'CharacterMovies' });
         
-        Genre.hasMany(Movie);
-        Movie.belongsTo(Genre);
+        GenreMovies.belongsTo(Genre);
+        GenreMovies.belongsTo(Movie);
+
+        Genre.belongsToMany(Movie, { through: 'GenreMovies'});
+        Movie.belongsToMany(Genre, { through: 'GenreMovies'});
 
         if ( options.mockdata === 'true') {
             mockData(db) 
@@ -70,6 +74,42 @@ async function mockData(db) {
             ignoreDuplicates: true
         }
     ); 
+
+    await GenreMovies.bulkCreate(
+        [
+            { genreId: 1, movieId: 1 },
+            { genreId: 2, movieId: 1 },
+            { genreId: 3, movieId: 1 },        
+
+            { genreId: 2, movieId: 2 },
+            { genreId: 3, movieId: 2 },
+            { genreId: 9, movieId: 2 },
+
+            { genreId: 1, movieId: 3 },
+            { genreId: 2, movieId: 3 },
+
+            { genreId: 1, movieId: 4 },
+            { genreId: 6, movieId: 4 },
+            { genreId: 7, movieId: 4 },
+            { genreId: 9, movieId: 4 },
+            { genreId: 10, movieId: 4 },
+
+            { genreId: 6, movieId: 5 },
+            { genreId: 7, movieId: 5 },
+            { genreId: 10, movieId: 5 },
+
+            { genreId: 1, movieId: 6 },
+            { genreId: 6, movieId: 6 },
+            { genreId: 7, movieId: 6 },
+            { genreId: 9, movieId: 6 },
+            { genreId: 10, movieId: 6 },
+
+            { genreId: 1, movieId: 7 },
+            { genreId: 7, movieId: 7 },
+            { genreId: 8, movieId: 7 },
+            { genreId: 10, movieId: 7 },
+        ]
+    );
 
     await Character.bulkCreate(
         [
@@ -134,7 +174,7 @@ async function mockData(db) {
             { characterId: 25, movieId: 7 }
         ]
     );
-  
+
 };
 
 module.exports = dbConfig;

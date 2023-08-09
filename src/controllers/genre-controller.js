@@ -4,9 +4,9 @@ const service = require('../services/genre-service');
 const findAllGenre = async (req,res) => {
 
     const genre = await service.findAll();
-    if ( !genre ) return res.status(404).send({ message: error.message });
+    if ( !genre ) return res.status(500).send({ message: error.message });
     
-    res.send({ message: 'Success found genre', genre });
+    return res.send({ message: 'Success found genre', genre });
 };
 
 const listGenreById = async (req,res) => {
@@ -17,9 +17,9 @@ const listGenreById = async (req,res) => {
         const genre = await service.findOne( id );
         if ( !genre ) return res.status(404).send({ message: 'Does not exist genre' });
 
-        res.send({ message: 'Success', genre: genre });
+        return res.send({ message: 'Success', genre: genre });
     } catch (error) {
-        return res.status(404).send({ message: error.message })
+        return res.status(400).send({ message: error.message })
     }
 };
 
@@ -34,7 +34,7 @@ const addGenre = async (req,res) => {
             genre: genre
         });
     } catch(error) {
-        return res.status(404).send({ message: error.message });
+        return res.status(400).send({ message: error.message });
     }
 };
 
@@ -46,12 +46,12 @@ const updateGenre = async (req,res) => {
 
     try {
         const genre = await service.findOne( id );
-        if( !genre ) return res.status(500).send({ message: 'Genre does not exist' });
+        if( !genre ) return res.status(404).send({ message: 'Genre does not exist' });
 
         const genreUpdate = await service.update( genre, body );
         return res.send({  message: 'Genre updated successfully', genre: genreUpdate });
     } catch (error) {
-        return res.status(404).send({ message: error.message })
+        return res.status(400).send({ message: error.message })
     }
 };
 
@@ -67,14 +67,14 @@ const deleteGenre = async (req,res) => {
         await genre.save();
         return res.send({ message: 'Genre removed successfully', genre: genre });
     } catch (error) {
-        return res.status(404).send({ message: error.message })
+        return res.status(400).send({ message: error.message })
     }
 };
 
 module.exports = {
     addGenre,
+    deleteGenre,
     findAllGenre,
     listGenreById,
     updateGenre,
-    deleteGenre
 };
