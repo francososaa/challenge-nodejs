@@ -1,6 +1,4 @@
 const Character = require('../models/character');
-const CharacterMovies = require('../models/characterMovie');
-const GenreMovies = require('../models/genreMovie');
 const Genre = require('../models/genre');
 const Movie = require('../models/movie');
 const User = require('../models/user');
@@ -11,17 +9,11 @@ async function dbConfig( db, options = {} ) {
     try {
         await db.authenticate();
 
-        CharacterMovies.belongsTo(Character);
-        CharacterMovies.belongsTo(Movie);
+        Character.belongsToMany(Movie, { through: 'CharacterMovies', foreignKey: "movieId"  });
+        Movie.belongsToMany(Character, { through: 'CharacterMovies', foreignKey: "characterId"  });
 
-        Character.belongsToMany(Movie, { through: 'CharacterMovies' });
-        Movie.belongsToMany(Character, { through: 'CharacterMovies' });
-        
-        GenreMovies.belongsTo(Genre);
-        GenreMovies.belongsTo(Movie);
-
-        Genre.belongsToMany(Movie, { through: 'GenreMovies'});
-        Movie.belongsToMany(Genre, { through: 'GenreMovies'});
+        Genre.hasMany(Movie, { foreignKey: "movieId" } );
+        Movie.belongsTo(Genre, { foreignKey: "genreId" } );
 
         if ( options.mockdata === 'true') {
             mockData(db) 
@@ -75,41 +67,6 @@ async function mockData(db) {
         }
     ); 
 
-    await GenreMovies.bulkCreate(
-        [
-            { genreId: 1, movieId: 1 },
-            { genreId: 2, movieId: 1 },
-            { genreId: 3, movieId: 1 },        
-
-            { genreId: 2, movieId: 2 },
-            { genreId: 3, movieId: 2 },
-            { genreId: 9, movieId: 2 },
-
-            { genreId: 1, movieId: 3 },
-            { genreId: 2, movieId: 3 },
-
-            { genreId: 1, movieId: 4 },
-            { genreId: 6, movieId: 4 },
-            { genreId: 7, movieId: 4 },
-            { genreId: 9, movieId: 4 },
-            { genreId: 10, movieId: 4 },
-
-            { genreId: 6, movieId: 5 },
-            { genreId: 7, movieId: 5 },
-            { genreId: 10, movieId: 5 },
-
-            { genreId: 1, movieId: 6 },
-            { genreId: 6, movieId: 6 },
-            { genreId: 7, movieId: 6 },
-            { genreId: 9, movieId: 6 },
-            { genreId: 10, movieId: 6 },
-
-            { genreId: 1, movieId: 7 },
-            { genreId: 7, movieId: 7 },
-            { genreId: 8, movieId: 7 },
-            { genreId: 10, movieId: 7 },
-        ]
-    );
 
     await Character.bulkCreate(
         [
@@ -143,36 +100,6 @@ async function mockData(db) {
         {
             ignoreDuplicates: true
         }
-    );
-    
-    await CharacterMovies.bulkCreate(
-        [
-            { characterId: 1, movieId: 1 },
-            { characterId: 2, movieId: 1 },
-            { characterId: 3, movieId: 1 },
-            { characterId: 4, movieId: 1 },
-            { characterId: 5, movieId: 2 },
-            { characterId: 6, movieId: 2 },
-            { characterId: 7, movieId: 2 },
-            { characterId: 8, movieId: 2 },
-            { characterId: 9, movieId: 2 },
-            { characterId: 10, movieId: 3 },
-            { characterId: 11, movieId: 3 },
-            { characterId: 12, movieId: 3 },
-            { characterId: 13, movieId: 3 },
-            { characterId: 14, movieId: 3 },
-            { characterId: 15, movieId: 4 },
-            { characterId: 16, movieId: 4 },
-            { characterId: 17, movieId: 5 },
-            { characterId: 18, movieId: 5 },
-            { characterId: 19, movieId: 5 },
-            { characterId: 20, movieId: 6 },
-            { characterId: 21, movieId: 6 },
-            { characterId: 22, movieId: 6 },
-            { characterId: 23, movieId: 7 },
-            { characterId: 24, movieId: 7 },
-            { characterId: 25, movieId: 7 }
-        ]
     );
 
 };
