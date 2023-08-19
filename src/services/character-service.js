@@ -5,13 +5,13 @@ const { Op } = require('sequelize');
 
 
 const create = async ( dataCharacter ) => {
-    const character = await Character.create({
-        name : dataCharacter.name,
-        image : dataCharacter.image,
-        age : dataCharacter.age,
-        weight : dataCharacter.weight,
-        history : dataCharacter.history,
-        status : dataCharacter.status, 
+    const character = await Character.create( {
+        dataCharacter,
+    }, {
+        include: [{
+            association: Character.Movie,
+            include: Movie
+        }]
     });
 
     await character.save();
@@ -38,18 +38,18 @@ const findOneDetail = async ( idCharacter ) => {
             {
                 model: Movie,
                 attributes: ["tittle","creationDate"],
-                include: [
-                    {
-                        model: Genre,
-                        attributes: ["name"],
-                        through: {
-                            attributes: []
-                        }
-                    },
-                ],
-                through: {
-                    attributes: []
-                }
+                // include: [
+                //     {
+                //         model: Genre,
+                //         attributes: ["name"],
+                //         through: {
+                //             attributes: []
+                //         }
+                //     },
+                // ],
+                // through: {
+                //     attributes: []
+                // }
             },
         ]
     } );

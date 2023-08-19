@@ -3,13 +3,8 @@ const Genre = require('../models/genre');
 const Character = require('../models/character');
 const { Op } = require('sequelize');
 
-const create = async ( dataMovie ) => {
-    const movie = await Movie.create({
-        tittle: dataMovie.tittle,
-        image: dataMovie.image,
-        creationDate: dataMovie.creationDate,
-        qualification: dataMovie.qualification
-    });
+const create = async (dataMovie) => {
+    const movie = await Movie.create(dataMovie);
 
     await movie.save;
     return movie;
@@ -19,19 +14,14 @@ const listAll = async () => {
     return await Movie.findAll({
         where: { status: true },
         attributes: ["tittle", "image", "creationDate"],
-        include: [
-                    {
-                        model: Genre,
-                        attributes: ["name"],
-                        through: {
-                            attributes: []
-                        }
-                    },
-                ],
+        include: {
+            model: Genre,
+            attributes: ["name"]
+        }
     });
 };
 
-const findOneDetail = async ( idMovie ) => {
+const findOneDetail = async (idMovie) => {
     return await Movie.findOne({
         where: {
             [Op.and]: [
@@ -39,14 +29,11 @@ const findOneDetail = async ( idMovie ) => {
                 { status: true }
             ]
         },
-        attributes: { exclude: ["status"] },
+        attributes: { exclude: ["status", "genreId"] },
         include: [
             {
                 model: Genre,
-                attributes: ["name"],
-                through: {
-                    attributes: []
-                }
+                attributes: ["name"]
             },
             {
                 model: Character,
@@ -72,35 +59,32 @@ const findOne = async ( idMovie ) => {
 };
 
 const update = async ( dataMovie, body ) => {
+    dataMovie.set(body)
+    await dataMovie.save();
+    return dataMovie;
+};
 
-    dataMovie.tittle = body.tittle;
-    dataMovie.image = body.image;
-    dataMovie.creationDate = body.creationDate,
-    dataMovie.qualification = body.qualification,
-    dataMovie.status = body.status;
-
+const deleteMovie = async ( dataMovie ) => {
+    dataMovie.status = false;
     await dataMovie.save();
     return dataMovie;
 };
 
 const findMovie = async ( query ) => {
-    let options = {};
-    if ( query.name ) options.tittle = { [Op.substring]: query.name };
-    options.status = true;
+    let where = {};
+    if ( query.name ) where.tittle = { [Op.substring]: query.name };
+    where.status = true;
 
     return await Movie.findAll({
-        where: options,
-        attributes: { exclude: ["status"] },
+        where,
+        attributes: { exclude: ["status","genreId"] },
         include: [
-                    {
-                        model: Genre,
-                        where: { "name": { [Op.substring]: query.genre} },
-                        attributes: ["name"],
-                        through: {
-                            attributes: []
-                        }
-                    },
-                ],
+            {
+                model: Genre,
+                where: { "id": { [Op.eq]: query.genre } },
+                attributes: ["name"]
+            },
+        ],
         order: [
             ["creationDate", query.order || "ASC"]
         ]
@@ -110,6 +94,7 @@ const findMovie = async ( query ) => {
 
 module.exports = {
     create,
+    deleteMovie,
     findMovie,
     findOne,
     findOneDetail,

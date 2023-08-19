@@ -9,11 +9,21 @@ async function dbConfig( db, options = {} ) {
     try {
         await db.authenticate();
 
-        Character.belongsToMany(Movie, { through: 'CharacterMovies', foreignKey: "movieId"  });
-        Movie.belongsToMany(Character, { through: 'CharacterMovies', foreignKey: "characterId"  });
+        Character.belongsToMany(Movie, { through: 'Character_Movie' });
+        Movie.belongsToMany(Character, { through: 'Character_Movie' });
 
-        Genre.hasMany(Movie, { foreignKey: "movieId" } );
-        Movie.belongsTo(Genre, { foreignKey: "genreId" } );
+        // Genre.belongsToMany(Movie, {  through: 'Genre_Movie' } );
+        // Movie.belongsToMany(Genre, {  through: 'Genre_Movie' } );
+
+        Genre.hasMany(Movie,{
+            foreignKey: 'genreId', // nombre del campo que va a ser la conexion en la tabla movie
+            sourceKey: 'id' // con quien se va a enlazar 
+        });
+
+        Movie.belongsTo(Genre, {
+            foreignKey: 'genreId', // nombre del campo que va a ser la conexion en la tabla genre
+            targetKey: 'id' // con quien se va a enlazar a la tabla padre
+        });
 
         if ( options.mockdata === 'true') {
             mockData(db) 
@@ -54,13 +64,13 @@ async function mockData(db) {
     
     await Movie.bulkCreate(
         [
-            { tittle: 'aladdin', image: 'aladdin.jpg', creationDate: '1992', qualification: 5 },
-            { tittle: 'la sirenita', image: 'la_sirenita.jpg', creationDate: '1989', qualification: 4 },
-            { tittle: 'universo de mickey mouse', image: 'universo_de_mickey_mouse.jpg', creationDate: '1928', qualification: 5 },
-            { tittle: 'spiderman', image: 'spiderman.jpg', creationDate: '1994', qualification: 5 },
-            { tittle: 'wanda vision', image: 'wanda_vision.jpg', creationDate: '2021', qualification: 3 },
-            { tittle: 'guardianes de la galaxia', image: 'guardianes_de_la_galaxia.jpg', creationDate: '2014', qualification: 4 },
-            { tittle: 'loki', image: 'loki.jpg', creationDate: '2021', qualification: 4 }
+            { tittle: 'aladdin', image: 'aladdin.jpg', creationDate: '1992', qualification: 5, genreId: 1 },
+            { tittle: 'la sirenita', image: 'la_sirenita.jpg', creationDate: '1989', qualification: 4, genreId: 3 },
+            { tittle: 'universo de mickey mouse', image: 'universo_de_mickey_mouse.jpg', creationDate: '1928', qualification: 5, genreId: 4 },
+            { tittle: 'spiderman', image: 'spiderman.jpg', creationDate: '1994', qualification: 5, genreId: 7 },
+            { tittle: 'wanda vision', image: 'wanda_vision.jpg', creationDate: '2021', qualification: 3, genreId: 6},
+            { tittle: 'guardianes de la galaxia', image: 'guardianes_de_la_galaxia.jpg', creationDate: '2014', qualification: 4, genreId: 9 },
+            { tittle: 'loki', image: 'loki.jpg', creationDate: '2021', qualification: 4, genreId: 10 }
         ],
         {
             ignoreDuplicates: true

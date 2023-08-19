@@ -47,11 +47,11 @@ const updateGenre = async (req,res) => {
     try {
         const genre = await service.findOne( id );
         if( !genre ) return res.status(404).send({ message: 'Genre does not exist' });
-
+        
         const genreUpdate = await service.update( genre, body );
         return res.send({  message: 'Genre updated successfully', genre: genreUpdate });
     } catch (error) {
-        return res.status(400).send({ message: error.message })
+        return res.status(400).send({ message: error.parent.stack })
     }
 };
 
@@ -63,9 +63,8 @@ const deleteGenre = async (req,res) => {
         const genre = await service.findOne( id );
         if ( !genre ) return res.status(404).send({ message: 'Genre not found' });
 
-        genre.status = false;
-        await genre.save();
-        return res.send({ message: 'Genre removed successfully', genre: genre });
+        const destoyGenre = await service.eliminarGenre(genre);
+        return res.send({ message: 'Genre removed successfully', genre: destoyGenre });
     } catch (error) {
         return res.status(400).send({ message: error.message })
     }
