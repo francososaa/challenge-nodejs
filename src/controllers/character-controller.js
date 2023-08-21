@@ -15,7 +15,7 @@ const findCharacterById = async (req, res) => {
     try {
         const character = await service.findOneDetail(id);
         if ( !character ) return res.status(404).send({ message: 'Does not exist character' });
-        return res.send({ message: 'Success', character: character });
+        return res.send({ message: 'Success', character });
     } catch (error) {
         return res.status(400).send({ message: error.mesage })
     }
@@ -32,7 +32,7 @@ const addCharacter = async (req, res) => {
             character: character
         });
     } catch (error) {
-        return res.status(400).send({ message: error.message });
+        return res.status(400).send({ message: error.parent.stack });
     }
 };
 
@@ -61,9 +61,8 @@ const deleteCharacter = async (req, res) => {
         const character = await service.findOne(id);
         if ( !character)  return res.status(404).send({ message: 'Character not found' });
 
-        character.status = false;
-        await character.save();
-        return res.send({ message: 'Character removed successfully', character: character });
+        const characterDestroy = await service.deleteCharacter(character);
+        return res.send({ message: 'Character removed successfully', characterDestroy });
     } catch (error) {
         return res.status(400).send({ message: error.message })
     }
@@ -73,7 +72,7 @@ const searchCharacter = async (req, res) => {
     if ( !req.query ) return res.status(404).send({ message: error.message })
 
     const character = await service.findCharacter( req.query );
-    return res.send({ message: 'Successful search', character: character });
+    return res.send({ message: 'Successful search', character });
 };
 
 module.exports = {

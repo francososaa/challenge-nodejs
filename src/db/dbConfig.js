@@ -12,9 +12,6 @@ async function dbConfig( db, options = {} ) {
         Character.belongsToMany(Movie, { through: 'Character_Movie' });
         Movie.belongsToMany(Character, { through: 'Character_Movie' });
 
-        // Genre.belongsToMany(Movie, {  through: 'Genre_Movie' } );
-        // Movie.belongsToMany(Genre, {  through: 'Genre_Movie' } );
-
         Genre.hasMany(Movie,{
             foreignKey: 'genreId', // nombre del campo que va a ser la conexion en la tabla movie
             sourceKey: 'id' // con quien se va a enlazar 
