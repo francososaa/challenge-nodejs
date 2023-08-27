@@ -13,7 +13,7 @@ const findCharacterById = async (req, res) => {
     if ( !id ) return res.status(500).send({ message: 'There is no id in the request' });
 
     try {
-        const character = await service.findOneDetail(id);
+        const character = await service.findOne(id);
         if ( !character ) return res.status(404).send({ message: 'Does not exist character' });
         return res.send({ message: 'Success', character });
     } catch (error) {
@@ -69,7 +69,6 @@ const deleteCharacter = async (req, res) => {
 };
 
 const searchCharacter = async (req, res) => {
-    if ( !req.query ) return res.status(404).send({ message: error.message })
 
     const character = await service.findCharacter( req.query );
     return res.send({ message: 'Successful search', character });

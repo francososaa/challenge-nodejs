@@ -4,7 +4,23 @@ const Character = require('../models/character');
 const { Op } = require('sequelize');
 
 const create = async (dataMovie) => {
-    const movie = await Movie.create(dataMovie);
+    const [ movie, create ] = await Movie.findOrCreate({
+        where: { tittle: dataMovie.tittle },
+        defaults: {
+            image: dataMovie.image,
+            creationDate: dataMovie.creationDate,
+            qualification: dataMovie.qualification
+
+        }
+    });
+
+    dataMovie.genreByMovie.forEach( async element => {
+        let [ newGenre, create ] = await Genre.findOrCreate({
+            where: { name: element.name },
+            defaults: { image: element.image }
+        });
+        newGenre.addMovies(movie);
+    });
 
     await movie.save;
     return movie;
@@ -16,7 +32,8 @@ const listAll = async () => {
         attributes: ["tittle", "image", "creationDate"],
         include: {
             model: Genre,
-            attributes: ["name"]
+            attributes: ["name"],
+            through:{ attributes: [] }
         }
     });
 };
@@ -33,14 +50,13 @@ const findOneDetail = async (idMovie) => {
         include: [
             {
                 model: Genre,
-                attributes: ["name"]
+                attributes: ["name"],
+                through:{ attributes: [] }
             },
             {
                 model: Character,
                 attributes: { exclude: ["status"] },
-                through: {
-                    attributes: []
-                }
+                through:{ attributes: [] }
             }
         ]
     });
@@ -71,24 +87,26 @@ const deleteMovie = async ( dataMovie ) => {
 };
 
 const findMovie = async ( query ) => {
-    let where = {};
-    if ( query.name ) where.tittle = { [Op.substring]: query.name };
-    where.status = true;
 
     return await Movie.findAll({
-        where,
+        where: {
+            tittle : { [Op.substring]: query.name },
+            status: true
+        },
         attributes: { exclude: ["status","genreId"] },
         include: [
             {
                 model: Genre,
-                where: { "id": { [Op.eq]: query.genre } },
-                attributes: ["name"]
+                where: { id: { [Op.eq]: query.genre } },
+                attributes: ["name"],
+                through:{ attributes: [] }
             },
         ],
         order: [
             ["creationDate", query.order || "ASC"]
         ]
     });
+    
 };
 
 

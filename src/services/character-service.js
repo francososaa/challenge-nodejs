@@ -4,36 +4,6 @@ const Genre = require('../models/genre');
 const { Op } = require('sequelize');
 
 
-// const create = async (dataCharacter) => {
-//     const character = await Character.create({
-//         dataCharacter,
-//     });
-
-//     await character.save();
-//     return character;
-// };
-
-const create = async ( dataCharacter) => {
-
-    const character = await Character.create({
-        name: dataCharacter.name, 
-        image: dataCharacter.image,
-        age: dataCharacter.age,
-        weight: dataCharacter.weight,
-        history: dataCharacter.history,
-        movies: [{
-            tittle: dataCharacter.movies.tittle,
-            image: dataCharacter.movies.image,
-            creationDate: dataCharacter.movies.creationDate,
-            qualification: dataCharacter.movies.qualification,
-        }]
-    }, {
-        include: Movie
-    });
-
-    await character.save();
-    return character;
-};
 const listAll = async () => {
     return await Character.findAll({
         where: { status: true },
@@ -41,7 +11,7 @@ const listAll = async () => {
     });
 };
 
-const findOneDetail = async (idCharacter) => {
+const findOne = async (idCharacter) => {
     return await Character.findOne({
         where: {
             [Op.and]: [
@@ -56,25 +26,41 @@ const findOneDetail = async (idCharacter) => {
                 attributes: ["tittle", "creationDate"],
                 include: {
                     model: Genre,
-                    attributes: ["name"]
+                    attributes: ["name"],
+                    through: { attributes: [] }
                 },
-                through: {
-                    attributes: []
-                }
+                through: { attributes: [] }
             },
         ]
     });
 };
 
-const findOne = async (idCharacter) => {
-    return await Character.findOne({
-        where: {
-            [Op.and]: [
-                { id: idCharacter },
-                { status: true }
-            ]
+const create = async (dataCharacter) => {
+
+    const [newCharacter, create] = await Character.findOrCreate({
+        where: { name: dataCharacter.name },
+        defaults: {
+            image: dataCharacter.image,
+            age: dataCharacter.age,
+            weight: dataCharacter.weight,
+            history: dataCharacter.histor
         }
     });
+
+    dataCharacter.movies.forEach(async element => {
+        let [newMovie, create] = await Movie.findOrCreate({
+            where: { tittle: element.tittle },
+            defaults: {
+                image: element.image,
+                creationDate: element.creationDate,
+                qualification: element.qualification
+            }
+        });
+        newCharacter.addMovies(newMovie);
+    });
+
+    await newCharacter.save();
+    return newCharacter;
 };
 
 const update = async (dataCharacter, body) => {
@@ -92,29 +78,10 @@ const deleteCharacter = async (dataCharacter) => {
 const findCharacter = async (query) => {
     let where = {};
 
-    if (query.name) where.name = { [Op.substring]: query.name };
+    where.name = { [Op.substring]: query.name };
+    where.status = true;
     if (query.age) where.age = query.age;
     if (query.weight) where.weight = query.weight;
-    where.status = true;
-
-    // if( !query.movies ){
-    //     return await Character.findAll({
-    //         where,
-    //         attributes: { exclude: ["status"] },
-    //         include: [
-    //             {
-    //                 model: Movie,
-    //                 attributes: { exclude: ["id","genreId","status"] },
-    //                 through: {
-    //                     attributes: []
-    //                 }
-    //             },
-    //         ],
-    //         order: [
-    //             ["age", "ASC"]
-    //         ]
-    //     });
-    // }
 
     return await Character.findAll({
         where,
@@ -122,9 +89,8 @@ const findCharacter = async (query) => {
         include: [
             {
                 model: Movie,
-                where: query.genre ? { "id":{[Op.eq]: query.genre} } : null  ,
-                // where: { "id": { [Op.eq]: query.movies} },
-                attributes: { exclude: ["id","genreId","status"] },
+                where: query.movies ? { id: { [Op.eq]: query.movies } } : false ,
+                attributes: { exclude: ["genreId","status"] },
                 through: {
                     attributes: []
                 }
@@ -134,7 +100,7 @@ const findCharacter = async (query) => {
             ["age", "ASC"]
         ]
     })
-
+    
 };
 
 module.exports = {
@@ -142,7 +108,6 @@ module.exports = {
     deleteCharacter,
     findCharacter,
     findOne,
-    findOneDetail,
     listAll,
     update
 }

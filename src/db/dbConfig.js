@@ -12,15 +12,8 @@ async function dbConfig( db, options = {} ) {
         Character.belongsToMany(Movie, { through: 'Character_Movie' });
         Movie.belongsToMany(Character, { through: 'Character_Movie' });
 
-        Genre.hasMany(Movie,{
-            foreignKey: 'genreId', // nombre del campo que va a ser la conexion en la tabla movie
-            sourceKey: 'id' // con quien se va a enlazar 
-        });
-
-        Movie.belongsTo(Genre, {
-            foreignKey: 'genreId', // nombre del campo que va a ser la conexion en la tabla genre
-            targetKey: 'id' // con quien se va a enlazar a la tabla padre
-        });
+        Genre.belongsToMany(Movie, { through: 'Genre_Movie' });
+        Movie.belongsToMany(Genre, { through: 'Genre_Movie' });
 
         if ( options.mockdata === 'true') {
             mockData(db) 
