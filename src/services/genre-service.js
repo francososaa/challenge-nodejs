@@ -1,10 +1,6 @@
 const Genre = require('../models/genre');
 const { Op } = require('sequelize');
 
-const create =  async (dataGenre) => {
-    const genre = await Genre.create(dataGenre);
-    return await genre.save();
-};
 
 const findAll = async () => {
     return await Genre.findAll({ 
@@ -22,6 +18,11 @@ const findOne = async (GenreID) => {
             ]
         }
     });
+};
+
+const create =  async (dataGenre) => {
+    const genre = await Genre.create(dataGenre);
+    return await genre.save();
 };
 
 const update = async (dataGenre, body ) => {
