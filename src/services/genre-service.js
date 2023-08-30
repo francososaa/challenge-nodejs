@@ -1,39 +1,37 @@
 const Genre = require('../models/genre');
-const Movie = require('../models/movie');
 const { Op } = require('sequelize');
 
-const create =  async ( dataGenre) => {
-    const genre = await Genre.create( dataGenre );
-
-    await genre.save();
-    return genre;
+const create =  async (dataGenre) => {
+    const genre = await Genre.create(dataGenre);
+    return await genre.save();
 };
 
 const findAll = async () => {
-    return await Genre.findAll({ where: { status: true }, attributes: { exclude: ["status"] }});
+    return await Genre.findAll({ 
+        where: { status: true }, 
+        attributes: { exclude: ["status"] } 
+    });
 };
 
-const findOne = async ( idGenre ) => {
+const findOne = async (GenreID) => {
     return await Genre.findOne({
         where: {
             [Op.and]: [
-                { id: idGenre },
+                { id: GenreID },
                 { status: true }
             ]
         }
     });
 };
 
-const update = async ( dataGenre, body  ) => {
-    dataGenre.set(body);
-    await dataGenre.save();
-    return dataGenre;
+const update = async (dataGenre, body ) => {
+    dataGenre.update(body);
+    return await dataGenre.save();
 };
 
-const eliminarGenre = async ( dataGenre ) => {
+const deleteGenre = async (dataGenre) => {
     dataGenre.status = false;
-    await dataGenre.save();
-    return dataGenre;
+    return await dataGenre.save();
 };
 
 module.exports = {
@@ -41,5 +39,5 @@ module.exports = {
     findAll,
     findOne,
     update,
-    eliminarGenre
+    deleteGenre
 };

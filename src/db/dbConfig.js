@@ -51,7 +51,7 @@ async function mockData(db) {
             ignoreDuplicates: true,
         }
     );
-    
+  
     await Movie.bulkCreate(
         [
             { tittle: 'aladdin', image: 'aladdin.jpg', creationDate: '1992', qualification: 5, genreId: 1 },
@@ -66,7 +66,6 @@ async function mockData(db) {
             ignoreDuplicates: true
         }
     ); 
-
 
     await Character.bulkCreate(
         [

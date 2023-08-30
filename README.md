@@ -114,7 +114,7 @@ De forma *opcional*, se podrán agregar tests de los diferentes endpoints de la 
 - Campos faltantes o con un formato inválido en BODY de las peticiones
 - Acceso a recursos inexistentes en endpoints de detalle
 
-Los tests pueden realizarse utilizando Mocha + Chai.
+Los tests pueden realizarse utilizando Jest + Supertest.
 
 ## Instalación
 

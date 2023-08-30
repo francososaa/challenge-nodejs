@@ -40,12 +40,16 @@ const Movie = sequelize.define('movie',
                 isInt: true,
             }
         },
-        status: { type: DataTypes.BOOLEAN, defaultValue: true },
-    }, {
-    timestamps: false,
-    createdAt: false,
-    updatedAt: false
-}
+        status: { 
+            type: DataTypes.BOOLEAN, 
+            defaultValue: true 
+        },
+    },
+    {
+        timestamps: false,
+        createdAt: false,
+        updatedAt: false
+    }
 );
 
 module.exports = Movie;

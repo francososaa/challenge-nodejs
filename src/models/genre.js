@@ -23,12 +23,16 @@ const Genre = sequelize.define('genre',
                 notEmpty: true,
             },
         },
-        status: { type: DataTypes.BOOLEAN, defaultValue: true },
-    }, {
-    timestamps: false,
-    createdAt: false,
-    updatedAt: false
-}
+        status: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        },
+    },
+    {
+        timestamps: false,
+        createdAt: false,
+        updatedAt: false
+    }
 );
 
 module.exports = Genre;

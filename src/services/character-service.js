@@ -11,11 +11,22 @@ const listAll = async () => {
     });
 };
 
-const findOne = async (idCharacter) => {
+const findOne = async (CharacterID) => {
     return await Character.findOne({
         where: {
             [Op.and]: [
-                { id: idCharacter },
+                { id: CharacterID },
+                { status: true }
+            ]
+        },
+    });
+};
+
+const detailCharacter = async (CharacterID) => {
+    return await Character.findOne({
+        where: {
+            [Op.and]: [
+                { id: CharacterID },
                 { status: true }
             ]
         },
@@ -43,36 +54,34 @@ const create = async (dataCharacter) => {
             image: dataCharacter.image,
             age: dataCharacter.age,
             weight: dataCharacter.weight,
-            history: dataCharacter.histor
+            history: dataCharacter.history
         }
     });
 
-    dataCharacter.movies.forEach(async element => {
-        let [newMovie, create] = await Movie.findOrCreate({
-            where: { tittle: element.tittle },
+    dataCharacter.movies.forEach( async movie => {
+        const [newMovie, create] = await Movie.findOrCreate({
+            where: { tittle: movie.tittle },
             defaults: {
-                image: element.image,
-                creationDate: element.creationDate,
-                qualification: element.qualification
+                image: movie.image,
+                creationDate: movie.creationDate,
+                qualification: movie.qualification
             }
         });
+        
         newCharacter.addMovies(newMovie);
     });
 
-    await newCharacter.save();
-    return newCharacter;
+    return await newCharacter.save();
 };
 
 const update = async (dataCharacter, body) => {
-    dataCharacter.set(body);
-    await dataCharacter.save();
-    return dataCharacter;
+    dataCharacter.update(body);
+    return await dataCharacter.save();
 };
 
 const deleteCharacter = async (dataCharacter) => {
     dataCharacter.status = false;
-    await dataCharacter.save();
-    return dataCharacter;
+    return await dataCharacter.save();
 };
 
 const findCharacter = async (query) => {
@@ -81,7 +90,6 @@ const findCharacter = async (query) => {
     where.name = { [Op.substring]: query.name };
     where.status = true;
     if (query.age) where.age = query.age;
-    if (query.weight) where.weight = query.weight;
 
     return await Character.findAll({
         where,
@@ -99,15 +107,17 @@ const findCharacter = async (query) => {
         order: [
             ["age", "ASC"]
         ]
-    })
+    });
     
 };
 
 module.exports = {
     create,
     deleteCharacter,
+    detailCharacter,
     findCharacter,
     findOne,
     listAll,
     update
 }
+
