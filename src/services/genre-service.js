@@ -1,44 +1,30 @@
-const Genre = require('../models/genre');
-const { Op } = require('sequelize');
+const GenreRepository = require('../repository/genre.repository');
 
+class GenreService {
 
-const findAll = async () => {
-    return await Genre.findAll({ 
-        where: { status: true }, 
-        attributes: { exclude: ["status"] } 
-    });
+    constructor(){};
+
+    async findAll(){    
+        return await GenreRepository.findAll();
+    };
+
+    async findGenreById(GenreID){
+        return await GenreRepository.findOne(GenreID);
+    };
+    
+    async create(dataGenre){
+        return await GenreRepository.create(dataGenre);
+    };
+
+    async update(dataGenre, body){
+        return await GenreRepository.update(dataGenre, body);
+    };
+
+    async delete(dataGenre){
+        return await GenreRepository.delete(dataGenre);
+    };
+
 };
 
-const findOne = async (GenreID) => {
-    return await Genre.findOne({
-        where: {
-            [Op.and]: [
-                { id: GenreID },
-                { status: true }
-            ]
-        }
-    });
-};
+module.exports = new GenreService();
 
-const create =  async (dataGenre) => {
-    const genre = await Genre.create(dataGenre);
-    return await genre.save();
-};
-
-const update = async (dataGenre, body ) => {
-    dataGenre.update(body);
-    return await dataGenre.save();
-};
-
-const deleteGenre = async (dataGenre) => {
-    dataGenre.status = false;
-    return await dataGenre.save();
-};
-
-module.exports = {
-    create,
-    findAll,
-    findOne,
-    update,
-    deleteGenre
-};

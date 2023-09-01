@@ -1,123 +1,39 @@
-const Character = require('../models/character');
-const Movie = require('../models/movie');
-const Genre = require('../models/genre');
-const { Op } = require('sequelize');
+const CharacterRepository = require('../repository/character.repository');
 
 
-const listAll = async () => {
-    return await Character.findAll({
-        where: { status: true },
-        attributes: ["name", "image"]
-    });
-};
+class CharacterService {
 
-const findOne = async (CharacterID) => {
-    return await Character.findOne({
-        where: {
-            [Op.and]: [
-                { id: CharacterID },
-                { status: true }
-            ]
-        },
-    });
-};
+    constructor(){};
 
-const detailCharacter = async (CharacterID) => {
-    return await Character.findOne({
-        where: {
-            [Op.and]: [
-                { id: CharacterID },
-                { status: true }
-            ]
-        },
-        attributes: { exclude: ["id", "status"] },
-        include: [
-            {
-                model: Movie,
-                attributes: ["tittle", "creationDate"],
-                include: {
-                    model: Genre,
-                    attributes: ["name"],
-                    through: { attributes: [] }
-                },
-                through: { attributes: [] }
-            },
-        ]
-    });
-};
-
-const create = async (dataCharacter) => {
-
-    const [newCharacter, create] = await Character.findOrCreate({
-        where: { name: dataCharacter.name },
-        defaults: {
-            image: dataCharacter.image,
-            age: dataCharacter.age,
-            weight: dataCharacter.weight,
-            history: dataCharacter.history
-        }
-    });
-
-    dataCharacter.movies.forEach( async movie => {
-        const [newMovie, create] = await Movie.findOrCreate({
-            where: { tittle: movie.tittle },
-            defaults: {
-                image: movie.image,
-                creationDate: movie.creationDate,
-                qualification: movie.qualification
-            }
-        });
-        
-        newCharacter.addMovies(newMovie);
-    });
-
-    return await newCharacter.save();
-};
-
-const update = async (dataCharacter, body) => {
-    dataCharacter.update(body);
-    return await dataCharacter.save();
-};
-
-const deleteCharacter = async (dataCharacter) => {
-    dataCharacter.status = false;
-    return await dataCharacter.save();
-};
-
-const findCharacter = async (query) => {
-    let where = {};
-
-    where.name = { [Op.substring]: query.name };
-    where.status = true;
-    if (query.age) where.age = query.age;
-
-    return await Character.findAll({
-        where,
-        attributes: { exclude: ["status"] },
-        include: [
-            {
-                model: Movie,
-                where: query.movies ? { id: { [Op.eq]: query.movies } } : false ,
-                attributes: { exclude: ["genreId","status"] },
-                through: {
-                    attributes: []
-                }
-            },
-        ],
-        order: [
-            ["age", "ASC"]
-        ]
-    });
+    async listAll(){
+        return await CharacterRepository.listAll();
+    };
     
+    async findCharacterById(CharacterID){
+        return await CharacterRepository.findOne(CharacterID);
+    };
+
+    async detailCharacter(CharacterID){
+        return await CharacterRepository.detailCharacter(CharacterID);
+    };
+
+    async create(dataCharacter){
+        return await CharacterRepository.create(dataCharacter);
+    };
+
+    async update(dataCharacter, body){
+        return await CharacterRepository.update(dataCharacter, body);
+    };
+
+    async delete(dataCharacter){
+        return await CharacterRepository.delete(dataCharacter);
+    };
+
+    async findByNameAndMovieOrAge(query){
+        return await CharacterRepository.findCharacter(query);
+    };
+
 };
 
-module.exports = {
-    create,
-    deleteCharacter,
-    detailCharacter,
-    findCharacter,
-    findOne,
-    listAll,
-    update
-}
+module.exports = new CharacterService();
 
