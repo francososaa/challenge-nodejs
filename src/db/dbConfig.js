@@ -31,7 +31,7 @@ async function mockData(db) {
 
     await db.sync({ force: true });
     await User.create(
-        { name: 'franco', email: 'soosaf22@gmail.com', password: 'sosita03323'},
+        { name: 'micaela', email: 'micaela.velazco@yahoo.com', password: 'sosita03323'},
     );
     
     await Genre.bulkCreate(
