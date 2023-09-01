@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const db  = require('./db/database');
-const dbConfiguration = require('./db/dbConfig');
+const db  = require('./src/db/database');
+const dbConfiguration = require('./src/db/dbConfig');
 
 // Initializations
 const app = express();
@@ -13,10 +13,10 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Endpoints
-app.use( '/auth', require('./routes/auth-router') );
-app.use( '/movies', require('./routes/movie-router') );
-app.use( '/genre', require('./routes/genre-router') );
-app.use( '/characters', require('./routes/character-router') );
+app.use( '/auth', require('./src/routes/auth-router') );
+app.use( '/movies', require('./src/routes/movie-router') );
+app.use( '/genre', require('./src/routes/genre-router') );
+app.use( '/characters', require('./src/routes/character-router') );
 
 //DB
 dbConfiguration( db, { mockdata: process.env.MOCKDATA } );
