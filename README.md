@@ -114,7 +114,7 @@ De forma *opcional*, se podrán agregar tests de los diferentes endpoints de la 
 - Campos faltantes o con un formato inválido en BODY de las peticiones
 - Acceso a recursos inexistentes en endpoints de detalle
 
-Los tests pueden realizarse utilizando Jest + Supertest.
+Los tests pueden realizarse utilizando Mocha + Chai.
 
 ## Instalación
 
@@ -125,6 +125,8 @@ cd challenge-nodejs-alkemy
 
 npm install
 
-npm run start
+docker-compose up -d
+
+npm run start:local
 ```
 

@@ -1,7 +1,7 @@
 version: '3.8'  
 services:  
   dbpostgres:  
-    container_name: challenge-nodejs  
+    container_name: challenge-nodejsssss  
     image: postgres  
     volumes:
        - challenge-nodejs-db:/var/lib/postgresql  
