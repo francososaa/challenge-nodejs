@@ -121,10 +121,12 @@ Los tests pueden realizarse utilizando Mocha + Chai.
 ```
 1) git clone https://github.com/francososaa/challenge-nodejs.git
 
-2) npm install
+2) Instalar los modulos de node.js con el comando: npm install
 
-3) docker-compose up -d
+3) Configurar las variables de entorno en el archivo .env (ver archivo .env.example)
 
-4) npm run start:local
+4) Ejecutar el comando: docker-compose up -d
+
+5) Ejecutar el comando npm run start:local para inicar el proyecto.
 ```
 
