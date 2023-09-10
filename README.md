@@ -123,9 +123,9 @@ Los tests pueden realizarse utilizando Mocha + Chai.
 
 2) Instalar los modulos de node.js con el comando: npm install
 
-3) Configurar las variables de entorno en el archivo .env (ver archivo .env.example)
+3) Configurar las variables de entorno en el archivo .env (ver archivo .env.sample)
 
-4) Ejecutar el comando: docker-compose up -d
+4) Ejecutar el comando docker-compose up -d para iniciar un repositorio docker
 
 5) Ejecutar el comando npm run start:local para inicar el proyecto.
 ```
