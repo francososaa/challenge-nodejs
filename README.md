@@ -119,14 +119,12 @@ Los tests pueden realizarse utilizando Mocha + Chai.
 ## Instalación
 
 ```
-git clone https://github.com/francososaa/challenge-nodejs.git
+1) git clone https://github.com/francososaa/challenge-nodejs.git
 
-cd challenge-nodejs-alkemy
+2) npm install
 
-npm install
+3) docker-compose up -d
 
-docker-compose up -d
-
-npm run start:local
+4) npm run start:local
 ```
 
